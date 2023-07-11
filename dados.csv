@@ -1,0 +1,99 @@
+Materia,Dia,Horario_inicio,Horario_fim
+Circuítos Digitais,Segunda-feira,16:30,18:30
+Circuítos Digitais,Quinta-feira,16:30,17:30
+Circuítos Digitais,Quinta-feira,17:30,18:30
+Laboratório de Programação I,Terça-feira,14:30,16:30
+Laboratório de Programação I,Quinta-feira,14:30,16:30
+Lógica e Algorítmo,Segunda-feira,14:30,16:30
+Lógica e Algorítmo,Quarta-feira,14:30,15:30
+Lógica e Algorítmo,Quarta-feira,15:30,16:30
+Prática em Sistemas Operacionais,Terça-feira,08:30,10:30
+Prática em Sistemas Operacionais,Quinta-feira,08:30,10:30
+Álgebra Linear,Terça-feira,08:30,10:30
+Álgebra Linear,Quinta-feira,08:30,10:30
+"Estruturas de Dados ""A""",Terça-feira,10:30,12:30
+"Estruturas de Dados ""A""",Quinta-feira,10:30,11:30
+"Estruturas de Dados ""A""",Quinta-feira,11:30,12:30
+Laboratório de Programação II,Segunda-feira,14:30,16:30
+Laboratório de Programação II,Quarta-feira,14:30,16:30
+Língua Inglesa Instrumental I,Segunda-feira,16:30,18:30
+Língua Inglesa Instrumental I,Quarta-feira,16:30,18:30
+"Matemática Discreta ""A""",Segunda-feira,10:30,12:30
+"Matemática Discreta ""A""",Quarta-feira,10:30,12:30
+Organização de Computadores,Segunda-feira,08:30,10:30
+Organização de Computadores,Quarta-feira,08:30,09:30
+Organização de Computadores,Quarta-feira,09:30,10:30
+"Arquiteturas de Computadores ""A""",Terça-feira,16:30,18:30
+"Arquiteturas de Computadores ""A""",Quinta-feira,16:30,18:30
+Estatística,Segunda-feira,16:30,18:30
+Estatística,Quarta-feira,16:30,18:30
+Paradigmas de Programação,Terça-feira,10:30,12:30
+Paradigmas de Programação,Quinta-feira,10:30,11:30
+Paradigmas de Programação,Quinta-feira,11:30,12:30
+"Pesquisa e Ordenação de Dados ""A""",Terça-feira,14:30,16:30
+"Pesquisa e Ordenação de Dados ""A""",Quinta-feira,14:30,16:30
+"Eletricidade e Magnetismo ""A""",Quarta-feira,14:30,16:30
+"Eletricidade e Magnetismo ""A""",Quinta-feira,14:30,16:30
+"Eletricidade e Magnetismo ""A""",Sexta-feira,14:30,16:30
+"Engenharia de Software ""A""",Terça-feira,08:30,10:30
+"Engenharia de Software ""A""",Sexta-feira,08:30,10:30
+Fundamentos de Banco de Dados,Segunda-feira,10:30,12:30
+Fundamentos de Banco de Dados,Quarta-feira,10:30,11:30
+Fundamentos de Banco de Dados,Quarta-feira,11:30,12:30
+Métodos Numéricos Computacionais,Segunda-feira,08:30,10:30
+Métodos Numéricos Computacionais,Quinta-feira,08:30,10:30
+Projeto e Análise de Algoritmos,Quarta-feira,16:30,18:30
+Projeto e Análise de Algoritmos,Sexta-feira,16:30,18:30
+"Sistemas Operacionais ""A""",Terça-feira,10:30,12:30
+"Sistemas Operacionais ""A""",Quinta-feira,10:30,12:30
+Teoria da Computação,Segunda-feira,14:30,16:30
+Teoria da Computação,Quarta-feira,14:30,16:30
+"Computadores e Sociedade ""A""",Terça-feira,14:30,16:30
+"Computadores e Sociedade ""A""",Quinta-feira,14:30,15:30
+"Computadores e Sociedade ""A""",Quinta-feira,15:30,16:30
+Lógica de Predicado,Segunda-feira,16:30,18:30
+Lógica de Predicado,Quarta-feira,16:30,18:30
+Redes de Computadores,Terça-feira,10:30,12:30
+Redes de Computadores,Quinta-feira,10:30,12:30
+Redes de Computadores,Quinta-feira,12:30,13:30
+Análise e Projeto de Sistemas Orientados a Objetos,Segunda-feira,08:30,10:30
+Análise e Projeto de Sistemas Orientados a Objetos,Sexta-feira,08:30,10:30
+Computação Gráfica Avançada,Segunda-feira,08:30,10:30
+Computação Gráfica Avançada,Quarta-feira,08:30,10:30
+Deep Learning,Terça-feira,08:30,10:30
+Deep Learning,Quinta-feira,08:30,10:30
+"Empreendedorismo ""B""",Sexta-feira,13:30,16:30
+"Empreendedorismo ""B""",Sexta-feira,16:30,17:30
+Engenharia de Ontologias,Quarta-feira,14:30,17:30
+Engenharia de Ontologias,Quarta-feira,17:30,18:30
+"Gerência de Redes ""A""",Quarta-feira,08:30,10:30
+"Gerência de Redes ""A""",Sexta-feira,10:30,11:30
+"Gerência de Redes ""A""",Sexta-feira,11:30,12:30
+Implementação de Banco de Dados,Segunda-feira,10:30,12:30
+Implementação de Banco de Dados,Quarta-feira,10:30,11:30
+Implementação de Banco de Dados,Quarta-feira,11:30,12:30
+Implementação de Linguagens de Programação,Terça-feira,14:30,16:30
+Implementação de Linguagens de Programação,Quinta-feira,14:30,15:30
+Implementação de Linguagens de Programação,Quinta-feira,15:30,16:30
+Internet das Coisas,Segunda-feira,14:30,16:30
+Internet das Coisas,Quarta-feira,14:30,16:30
+Linguagens de Marcação Extensíveis,Quarta-feira,08:30,11:30
+Linguagens de Marcação Extensíveis,Quarta-feira,11:30,12:30
+Maratona de Programação,Segunda-feira,16:30,18:30
+Maratona de Programação,Sexta-feira,10:30,12:30
+Mineração de Dados,Terça-feira,16:30,18:30
+Mineração de Dados,Quinta-feira,16:30,17:30
+Mineração de Dados,Quinta-feira,17:30,18:30
+Modelagem e Simulacao,Sexta-feira,15:30,17:30
+Modelagem e Simulacao,Sábado,10:30,11:30
+Modelagem e Simulacao,Sábado,11:30,12:30
+Projeto de Software II,Terça-feira,13:30,15:30
+Projeto de Software II,Terça-feira,15:30,16:30
+Projeto de Software II,Quarta-feira,13:30,14:30
+Projeto de Software II,Quinta-feira,13:30,16:30
+Projeto de Software II,Sexta-feira,13:30,14:30
+Qualidade de Software,Segunda-feira,10:30,12:30
+Qualidade de Software,Quarta-feira,10:30,11:30
+Qualidade de Software,Quarta-feira,11:30,12:30
+"Sistemas de Informacao Distribuidos ""A""",Terça-feira,10:30,12:30
+"Sistemas de Informacao Distribuidos ""A""",Quinta-feira,10:30,12:30

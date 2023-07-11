@@ -13,7 +13,7 @@ Facilitar a busca por disciplinas que se encaixem apenas no intervalo de horári
 
 ## Execução
 
-Para facilitar o processo de encontrar o path das divs, utilizeo o [xPath Finder](https://chrome.google.com/webstore/detail/xpath-finder/ihnknokegkbpmofmafnkoadfjkhlogph/related?hl=pt-BR) como ferramenta facilitadora, 
+Para facilitar o processo de encontrar o path das divs, utilize o [xPath Finder](https://chrome.google.com/webstore/detail/xpath-finder/ihnknokegkbpmofmafnkoadfjkhlogph/related?hl=pt-BR) como ferramenta facilitadora, 
 
 Comece instalando as depêndencias do python necessárias. Utilize  ```pip install selenium``` para instalar a biblioteca responsavel pela navegação no chrome. Em seguida realize a instalação do *webdriver chrome*, a instalação deve seguir a seguinte documentação: ```[ChromeDriver doc](https://chromedriver.chromium.org/getting-started)```.
 
