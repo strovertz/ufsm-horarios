@@ -1,13 +1,13 @@
 import csv
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from urllib.parse import urlparse, parse_qs
 from string import Template
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from urllib.parse import parse_qs, urlparse
+
 
 service = Service(executable_path="/usr/local/bin/chromedriver")
 
@@ -68,33 +68,25 @@ def generate_html(data, materia_selecionada=None):
                 var startTime = inputStartTime.value;
                 var endTime = inputEndTime.value;
 
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', '/horarios', true);
-                xhr.setRequestHeader('Materia', day);
-                xhr.onload = function () {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        var table = document.getElementById('table-horarios');
-                        table.innerHTML = xhr.responseText;
-                    }
-                };
-                xhr.send();
-            }
-            
-            function submitForm(event) {
-                event.preventDefault();
-                var form = document.getElementById('course-form');
-                var inputCourse = document.getElementById('input-course');
-                var course = inputCourse.value.trim();
+                var table = document.getElementById('table-horarios');
+                var rows = table.getElementsByTagName('tr');
 
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', '/horarios?course=' + course, true);
-                xhr.onload = function () {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        var table = document.getElementById('table-horarios');
-                        table.innerHTML = xhr.responseText;
+                for (var i = 1; i < rows.length; i++) {
+                    var row = rows[i];
+                    var cells = row.getElementsByTagName('td');
+                    var dia = cells[1].innerText;
+                    var horarioInicio = cells[2].innerText;
+                    var horarioFim = cells[3].innerText;
+
+                    var matchDay = day === 'Todos' || dia === day;
+                    var matchTime = startTime === '' && endTime === '' || horarioInicio >= startTime && horarioFim <= endTime;
+
+                    if (matchDay && matchTime) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
                     }
-                };
-                xhr.send();
+                }
             }
         </script>
     </head>
@@ -102,12 +94,6 @@ def generate_html(data, materia_selecionada=None):
         <h1>Horários das Disciplinas</h1>
 
         <div class="filter-container">
-            <form id="course-form" onsubmit="submitForm(event)">
-                <label class="filter-label" for="input-course">Curso:</label>
-                <input id="input-course" type="text" name="course">
-                <button type="submit">Selecionar</button>
-            </form>
-
             <label class="filter-label">Dia:</label>
             <select id="input-day" onchange="filterTable()">
                 <option value="Todos">Todos</option>
@@ -141,6 +127,54 @@ def generate_html(data, materia_selecionada=None):
 
     return html_template.substitute(table_rows=table_rows)
 
+# Função para coletar os horários do site da UFSM
+def collect_horarios(curso):
+    horarios = []
+
+    with webdriver.Chrome(service=service) as driver:
+        driver.get(f'https://www.ufsm.br/cursos/graduacao/santa-maria/{curso}/horarios')
+
+        semestre = 1
+        while True:
+            semestre_xpath = f'/html/body/main/div[2]/div/section/article/div/div[3]/div/div[5]/div[{semestre}]/div[1]/a'
+            try:
+                semestre_elemento = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, semestre_xpath)))
+                print('\nSemestre:', semestre_elemento.text)
+
+                disciplinas_xpath = f'/html/body/main/div[2]/div/section/article/div/div[3]/div/div[5]/div[{semestre}]/div[2]/div/div/div[1]/div'
+                disciplinas = driver.find_elements(By.XPATH, disciplinas_xpath)
+
+                if not disciplinas:
+                    break
+
+                for materia in disciplinas:
+                    elemento_expansivel = materia.find_element(By.TAG_NAME, 'a')
+                    print('Materia:', elemento_expansivel.text)
+                    # Rolar a página para pegar a próxima matéria
+                    driver.execute_script("arguments[0].scrollIntoView(true);", elemento_expansivel)
+                    driver.execute_script("arguments[0].click();", elemento_expansivel)
+                    tabela_xpath = './/div[2]/div/div[2]/div/div[2]/table'
+                    tabela = WebDriverWait(materia, 10).until(EC.visibility_of_element_located((By.XPATH, tabela_xpath)))
+                    linhas = tabela.find_elements(By.TAG_NAME, 'tr')
+
+                    for linha in linhas[1:]:  # Ignorar a primeira linha (cabeçalho da tabela)
+                        elementos = linha.find_elements(By.TAG_NAME, 'td')
+                        dia_semana = elementos[0].text
+                        horario_inicio = elementos[1].text
+                        horario_fim = elementos[2].text
+                        horarios.append({
+                            'Materia': elemento_expansivel.text,
+                            'Dia': dia_semana,
+                            'Horario_inicio': horario_inicio,
+                            'Horario_fim': horario_fim
+                        })
+
+                semestre += 1
+            except:
+                break
+
+    return horarios
+
 # HTTPRequestHandler personalizado para servir a página HTML
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -158,15 +192,23 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html; charset=utf-8')
             self.end_headers()
 
-            data = []
-            with open('dados.csv', 'r', encoding='utf-8') as csvfile:
-                reader = csv.DictReader(csvfile)
-                data = [row for row in reader]
-
             query_components = parse_qs(urlparse(self.path).query)
-            materia_selecionada = query_components.get('course', [None])[0]
+            curso_selecionado = query_components.get('course', [None])[0]
 
-            html = generate_html(data, materia_selecionada)
+            horarios = collect_horarios(curso_selecionado)
+
+            with open('dados.csv', 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow(['Materia', 'Dia', 'Horario_inicio', 'Horario_fim'])  # Cabeçalho
+                for horario in horarios:
+                    writer.writerow([
+                        horario['Materia'],
+                        horario['Dia'],
+                        horario['Horario_inicio'],
+                        horario['Horario_fim']
+                    ])
+
+            html = generate_html(horarios)
             self.wfile.write(html.encode('utf-8'))
         else:
             self.send_response(404)
@@ -174,58 +216,11 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write('Página não encontrada'.encode('utf-8'))
 
-
-# Inicializar o driver do Chrome com a opção headless
-chrome_options = Options()
-chrome_options.add_argument('--headless')
-
+# Função para iniciar o servidor HTTP local
 def run_server():
     server_address = ('', 8000)
     httpd = HTTPServer(server_address, RequestHandler)
     print('Servidor iniciado em http://localhost:8000')
     httpd.serve_forever()
-
-def start_webdriver(course):
-    with webdriver.Chrome(service=service, options=chrome_options) as driver:
-        url = f'https://www.ufsm.br/cursos/graduacao/santa-maria/{course}/horarios'
-        driver.get(url)
-
-        with open('dados.csv', 'w', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(['Materia', 'Dia', 'Horario_inicio', 'Horario_fim'])  # Cabeçalho
-
-            semestre = 1
-            while True:
-                semestre_xpath = f'/html/body/main/div[2]/div/section/article/div/div[3]/div/div[5]/div[{semestre}]/div[1]/a'
-                try:
-                    semestre_elemento = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, semestre_xpath)))
-                    print('\nSemestre:', semestre_elemento.text)
-
-                    disciplinas_xpath = f'/html/body/main/div[2]/div/section/article/div/div[3]/div/div[5]/div[{semestre}]/div[2]/div/div/div[1]/div'
-                    disciplinas = driver.find_elements(By.XPATH, disciplinas_xpath)
-
-                    if not disciplinas:
-                        break
-
-                    for materia in disciplinas:
-                        elemento_expansivel = materia.find_element(By.TAG_NAME, 'a')
-                        print('Materia:', elemento_expansivel.text)
-                        # Rolar a página pra pegar a próxima matéria
-                        driver.execute_script("arguments[0].scrollIntoView(true);", elemento_expansivel)
-                        driver.execute_script("arguments[0].click();", elemento_expansivel)
-                        tabela_xpath = './/div[2]/div/div[2]/div/div[2]/table'
-                        tabela = WebDriverWait(materia, 10).until(EC.visibility_of_element_located((By.XPATH, tabela_xpath)))
-                        linhas = tabela.find_elements(By.TAG_NAME, 'tr')
-
-                        for linha in linhas[1:]:  # Ignorar a primeira linha (cabeçalho da tabela)
-                            elementos = linha.find_elements(By.TAG_NAME, 'td')
-                            dia_semana = elementos[0].text
-                            horario_inicio = elementos[1].text
-                            horario_fim = elementos[2].text
-                            writer.writerow([elemento_expansivel.text, dia_semana, horario_inicio, horario_fim])
-
-                    semestre += 1
-                except:
-                    break
 
 run_server()
