@@ -148,10 +148,12 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', 'text/html; charset=utf-8')
             self.end_headers()
-
-            with open('index.html', 'r') as file:
-                self.wfile.write(file.read().encode('utf-8'))
-        elif self.path == '/horarios':
+            self.wfile.write('Selecione um curso:'.encode('utf-8'))
+            self.wfile.write('<br>'.encode('utf-8'))
+            self.wfile.write('<a href="/horarios?course=ciencia-da-computacao">Ciência da Computação</a>'.encode('utf-8'))
+            self.wfile.write('<br>'.encode('utf-8'))
+            self.wfile.write('<a href="/horarios?course=sistemas-de-informacao">Sistemas de Informação</a>'.encode('utf-8'))
+        elif self.path.startswith('/horarios'):
             self.send_response(200)
             self.send_header('Content-type', 'text/html; charset=utf-8')
             self.end_headers()
@@ -171,6 +173,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html; charset=utf-8')
             self.end_headers()
             self.wfile.write('Página não encontrada'.encode('utf-8'))
+
 
 # Inicializar o driver do Chrome com a opção headless
 chrome_options = Options()
