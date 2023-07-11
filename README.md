@@ -16,3 +16,10 @@ Comece instalando as depêndencias do python necessárias. Utilize  ```pip insta
 
 Em seguida, basta clonar o repositório utilizando ```git clone https://github.com/strovertz/ufsm-horarios.git``` navegar até a pasta prd utilizando ```cd ufsm-horarios/prd``` e executar o programa com ```python3 ./scrap.py```.
 
+## Necessidades de atualização: 
+
+- Realizar requisições em tempo real para obter dados de outro curso durante a navegação no servidor;
+- Realizar agrupamento por cadeira;
+- Exibição de calendário;
+
+A implantação dessas funcionalidades devem manter a ferramenta como um facilitador para encontrar matérias que se encaixam em um horário *x* para o dia *y* da semana, dessa forma, não podem aproximar ainda mais a ferramenta do site padrão da UFSM.
