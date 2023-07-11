@@ -65,6 +65,38 @@ def generate_html(data, materia_selecionada=None):
             .filter-label {
                 margin-right: 8px;
             }
+            .filter-container {
+                display: flex;
+                justify-content: space-evenly;
+                width: 100%;
+                height: 150px;
+                align-items: center;
+                align-content: center;
+                border-bottom: 1px solid #00000048;
+                background-color: rgb(10, 137, 146);
+                box-shadow: 4px 4px 45px rgba(0,0,0, 0.12);
+            }
+
+            .filter-label {
+                text-transform: uppercase;
+                margin-right: 10px;
+                margin-left: 10px;
+                color: #fff;
+            }
+
+            .input--section input, .input--section select {
+                width: 100px !important;
+                height: 40px;
+                border-radius: 10px;
+                border: none;
+                background-color: rgb(230, 230, 230);
+            }
+
+            .info--section h1 {
+                font-weight: bolder;
+                font-size: 2.5rem;
+                color: #fff;
+            }
         </style>
         <script>
             function filterTable() {
@@ -99,25 +131,30 @@ def generate_html(data, materia_selecionada=None):
         </script>
     </head>
     <body>
-        <h1>Horários das Disciplinas</h1>
+        
 
         <div class="filter-container">
-            <label class="filter-label">Dia:</label>
-            <select id="input-day" onchange="filterTable()">
-                <option value="Todos">Todos</option>
-                <option value="Segunda-feira">Segunda-feira</option>
-                <option value="Terça-feira">Terça-feira</option>
-                <option value="Quarta-feira">Quarta-feira</option>
-                <option value="Quinta-feira">Quinta-feira</option>
-                <option value="Sexta-feira">Sexta-feira</option>
-                <option value="Sábado">Sábado</option>
-            </select>
+            <div class="info--section">
+                <h1>Horários das Disciplinas</h1>
+            </div>
+            <div class="input--section">
+                <label class="filter-label">Dia:</label>
+                <select id="input-day" onchange="filterTable()">
+                    <option value="Todos">Todos</option>
+                    <option value="Segunda-feira">Segunda-feira</option>
+                    <option value="Terça-feira">Terça-feira</option>
+                    <option value="Quarta-feira">Quarta-feira</option>
+                    <option value="Quinta-feira">Quinta-feira</option>
+                    <option value="Sexta-feira">Sexta-feira</option>
+                    <option value="Sábado">Sábado</option>
+                </select>
 
-            <label class="filter-label">Horário Início:</label>
-            <input id="input-start-time" type="time" onchange="filterTable()">
+                <label class="filter-label">Horário Início:</label>
+                <input id="input-start-time" type="time" onchange="filterTable()">
 
-            <label class="filter-label">Horário Fim:</label>
-            <input id="input-end-time" type="time" onchange="filterTable()">
+                <label class="filter-label">Horário Fim:</label>
+                <input id="input-end-time" type="time" onchange="filterTable()">
+            </div>
         </div>
 
         <table id="table-horarios">
