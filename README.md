@@ -12,7 +12,7 @@ Facilitar a busca por disciplinas que se encaixem apenas no intervalo de horári
 
 ## Execução
 
-Comece instalando as depêndencias do python necessárias. Utilize  ```pip install selenium``` para instalar a biblioteca responsavel pela navegação no chrome. Em seguida realize a instalação do *webdriver chrome*, a instalação deve seguir a seguinte documentação: https://chromedriver.chromium.org/getting-started.
+Comece instalando as depêndencias do python necessárias. Utilize  ```pip install selenium``` para instalar a biblioteca responsavel pela navegação no chrome. Em seguida realize a instalação do *webdriver chrome*, a instalação deve seguir a seguinte documentação: ```https://chromedriver.chromium.org/getting-started```.
 
 Em seguida, basta clonar o repositório utilizando ```git clone https://github.com/strovertz/ufsm-horarios.git``` navegar até a pasta prd utilizando ```cd ufsm-horarios/prd``` e executar o programa com ```python3 ./scrap.py```.
 
