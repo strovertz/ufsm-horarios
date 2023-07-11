@@ -19,6 +19,12 @@ Comece instalando as depêndencias do python necessárias. Utilize  ```pip insta
 
 Em seguida, basta clonar o repositório utilizando ```git clone https://github.com/strovertz/ufsm-horarios.git``` navegar até a pasta prd utilizando ```cd ufsm-horarios/prd``` e executar o programa com ```python3 ./scrap.py```.
 
+### OUTPUT
+
+O prompt exibe quais foram as disciplinas encontradas e inicia o servidor local.
+![image](https://github.com/strovertz/ufsm-horarios/assets/74078237/194674f7-981a-4e6a-af64-d59c786e0b97)
+
+
 ## Necessidades de atualização: 
 
 - Realizar requisições em tempo real para obter dados de outro curso durante a navegação no servidor;
