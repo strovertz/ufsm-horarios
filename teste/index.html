@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Selecionar Curso</title>
+    <style>
+        form {
+            margin-bottom: 16px;
+        }
+
+        label {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Selecionar Curso</h1>
+
+    <form id="course-form" onsubmit="submitForm(event)">
+        <label for="input-course">Curso:</label>
+        <input id="input-course" type="text" name="course">
+        <button type="submit">Iniciar</button>
+    </form>
+
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+            var form = document.getElementById('course-form');
+            var inputCourse = document.getElementById('input-course');
+            var course = inputCourse.value.trim();
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/horarios?course=' + course, true);
+            xhr.onload = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    window.location.href = '/horarios';
+                }
+            };
+            xhr.send();
+        }
+    </script>
+</body>
+</html>
