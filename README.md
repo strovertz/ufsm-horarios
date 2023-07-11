@@ -12,4 +12,4 @@ Facilitar a busca por disciplinas que se encaixem apenas no intervalo de horári
 
 ## Execução
 
-Basta clonar o repositório utilizando ```git clone https://github.com/strovertz/ufsm-horarios.git``` navegar até a pasta prd utilizando ```bash\n cd ufsm-horarios/prd``` e executar o programa com ```python3 ./scrap.py```.
+Basta clonar o repositório utilizando ```git clone https://github.com/strovertz/ufsm-horarios.git``` navegar até a pasta prd utilizando ```cd ufsm-horarios/prd``` e executar o programa com ```python3 ./scrap.py```.
