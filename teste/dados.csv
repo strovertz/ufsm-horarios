@@ -1,27 +1,99 @@
-Materia,Dia,Horario_inicio,Horario_fim
-Conceitos e Procedimentos do Desenho Industrial,Quarta-feira,08:30,10:30
-Conceitos e Procedimentos do Desenho Industrial,Quarta-feira,10:30,11:30
-Desenho III - Composição,Segunda-feira,14:30,16:30
-Desenho III - Composição,Segunda-feira,16:30,17:30
-Desenho IV - Expressividade,Segunda-feira,08:30,10:30
-Desenho IV - Expressividade,Segunda-feira,10:30,11:30
-Desenho Técnico,Terça-feira,08:30,10:30
-Desenho Técnico,Terça-feira,10:30,11:30
-História e Estética da Arte I,Quinta-feira,14:30,15:30
-História e Estética da Arte I,Quinta-feira,15:30,17:30
-Módulos Tridimensionais e Formas,Quinta-feira,08:30,10:30
-Módulos Tridimensionais e Formas,Quinta-feira,10:30,11:30
-Produção e Impressão Gráfica,Sexta-feira,08:30,09:30
-Produção e Impressão Gráfica,Sexta-feira,09:30,11:30
-Desenho e Experimentação Gráfica,Segunda-feira,14:00,17:00
-Desenho e Experimentação Gráfica,Segunda-feira,17:00,18:00
-Introdução ao Desenho de Projetos,Sexta-feira,14:30,16:30
-Introdução ao Desenho de Projetos,Sexta-feira,16:30,17:30
-Perspectiva e Representação da Forma,Quarta-feira,14:30,16:30
-Perspectiva e Representação da Forma,Quarta-feira,16:30,17:30
-Introdução à Metodologia da Pesquisa,Terça-feira,08:30,09:30
-Introdução à Metodologia da Pesquisa,Terça-feira,09:30,11:30
-Sociologia e Cultura Contemporâneas,Quinta-feira,14:30,15:30
-Sociologia e Cultura Contemporâneas,Quinta-feira,15:30,18:30
-"Marketing Aplicado ao Desenho Industrial ""A""",Quinta-feira,08:30,09:30
-"Marketing Aplicado ao Desenho Industrial ""A""",Quinta-feira,09:30,12:30
+Materia,Dia,Horario_inicio,Horario_fim,Curso
+Circuítos Digitais,Segunda-feira,16:30,18:30,Ciência da Computação
+Circuítos Digitais,Quinta-feira,16:30,17:30,Ciência da Computação
+Circuítos Digitais,Quinta-feira,17:30,18:30,Ciência da Computação
+Laboratório de Programação I,Terça-feira,14:30,16:30,Ciência da Computação
+Laboratório de Programação I,Quinta-feira,14:30,16:30,Ciência da Computação
+Lógica e Algorítmo,Segunda-feira,14:30,16:30,Ciência da Computação
+Lógica e Algorítmo,Quarta-feira,14:30,15:30,Ciência da Computação
+Lógica e Algorítmo,Quarta-feira,15:30,16:30,Ciência da Computação
+Prática em Sistemas Operacionais,Terça-feira,08:30,10:30,Ciência da Computação
+Prática em Sistemas Operacionais,Quinta-feira,08:30,10:30,Ciência da Computação
+Álgebra Linear,Terça-feira,08:30,10:30,Ciência da Computação
+Álgebra Linear,Quinta-feira,08:30,10:30,Ciência da Computação
+"Estruturas de Dados ""A""",Terça-feira,10:30,12:30,Ciência da Computação
+"Estruturas de Dados ""A""",Quinta-feira,10:30,11:30,Ciência da Computação
+"Estruturas de Dados ""A""",Quinta-feira,11:30,12:30,Ciência da Computação
+Laboratório de Programação II,Segunda-feira,14:30,16:30,Ciência da Computação
+Laboratório de Programação II,Quarta-feira,14:30,16:30,Ciência da Computação
+Língua Inglesa Instrumental I,Segunda-feira,16:30,18:30,Ciência da Computação
+Língua Inglesa Instrumental I,Quarta-feira,16:30,18:30,Ciência da Computação
+"Matemática Discreta ""A""",Segunda-feira,10:30,12:30,Ciência da Computação
+"Matemática Discreta ""A""",Quarta-feira,10:30,12:30,Ciência da Computação
+Organização de Computadores,Segunda-feira,08:30,10:30,Ciência da Computação
+Organização de Computadores,Quarta-feira,08:30,09:30,Ciência da Computação
+Organização de Computadores,Quarta-feira,09:30,10:30,Ciência da Computação
+"Arquiteturas de Computadores ""A""",Terça-feira,16:30,18:30,Ciência da Computação
+"Arquiteturas de Computadores ""A""",Quinta-feira,16:30,18:30,Ciência da Computação
+Estatística,Segunda-feira,16:30,18:30,Ciência da Computação
+Estatística,Quarta-feira,16:30,18:30,Ciência da Computação
+Paradigmas de Programação,Terça-feira,10:30,12:30,Ciência da Computação
+Paradigmas de Programação,Quinta-feira,10:30,11:30,Ciência da Computação
+Paradigmas de Programação,Quinta-feira,11:30,12:30,Ciência da Computação
+"Pesquisa e Ordenação de Dados ""A""",Terça-feira,14:30,16:30,Ciência da Computação
+"Pesquisa e Ordenação de Dados ""A""",Quinta-feira,14:30,16:30,Ciência da Computação
+"Eletricidade e Magnetismo ""A""",Quarta-feira,14:30,16:30,Ciência da Computação
+"Eletricidade e Magnetismo ""A""",Quinta-feira,14:30,16:30,Ciência da Computação
+"Eletricidade e Magnetismo ""A""",Sexta-feira,14:30,16:30,Ciência da Computação
+"Engenharia de Software ""A""",Terça-feira,08:30,10:30,Ciência da Computação
+"Engenharia de Software ""A""",Sexta-feira,08:30,10:30,Ciência da Computação
+Fundamentos de Banco de Dados,Segunda-feira,10:30,12:30,Ciência da Computação
+Fundamentos de Banco de Dados,Quarta-feira,10:30,11:30,Ciência da Computação
+Fundamentos de Banco de Dados,Quarta-feira,11:30,12:30,Ciência da Computação
+Métodos Numéricos Computacionais,Segunda-feira,08:30,10:30,Ciência da Computação
+Métodos Numéricos Computacionais,Quinta-feira,08:30,10:30,Ciência da Computação
+Projeto e Análise de Algoritmos,Quarta-feira,16:30,18:30,Ciência da Computação
+Projeto e Análise de Algoritmos,Sexta-feira,16:30,18:30,Ciência da Computação
+"Sistemas Operacionais ""A""",Terça-feira,10:30,12:30,Ciência da Computação
+"Sistemas Operacionais ""A""",Quinta-feira,10:30,12:30,Ciência da Computação
+Teoria da Computação,Segunda-feira,14:30,16:30,Ciência da Computação
+Teoria da Computação,Quarta-feira,14:30,16:30,Ciência da Computação
+"Computadores e Sociedade ""A""",Terça-feira,14:30,16:30,Ciência da Computação
+"Computadores e Sociedade ""A""",Quinta-feira,14:30,15:30,Ciência da Computação
+"Computadores e Sociedade ""A""",Quinta-feira,15:30,16:30,Ciência da Computação
+Lógica de Predicado,Segunda-feira,16:30,18:30,Ciência da Computação
+Lógica de Predicado,Quarta-feira,16:30,18:30,Ciência da Computação
+Redes de Computadores,Terça-feira,10:30,12:30,Ciência da Computação
+Redes de Computadores,Quinta-feira,10:30,12:30,Ciência da Computação
+Redes de Computadores,Quinta-feira,12:30,13:30,Ciência da Computação
+Análise e Projeto de Sistemas Orientados a Objetos,Segunda-feira,08:30,10:30,Ciência da Computação
+Análise e Projeto de Sistemas Orientados a Objetos,Sexta-feira,08:30,10:30,Ciência da Computação
+Computação Gráfica Avançada,Segunda-feira,08:30,10:30,Ciência da Computação
+Computação Gráfica Avançada,Quarta-feira,08:30,10:30,Ciência da Computação
+Deep Learning,Terça-feira,08:30,10:30,Ciência da Computação
+Deep Learning,Quinta-feira,08:30,10:30,Ciência da Computação
+"Empreendedorismo ""B""",Sexta-feira,13:30,16:30,Ciência da Computação
+"Empreendedorismo ""B""",Sexta-feira,16:30,17:30,Ciência da Computação
+Engenharia de Ontologias,Quarta-feira,14:30,17:30,Ciência da Computação
+Engenharia de Ontologias,Quarta-feira,17:30,18:30,Ciência da Computação
+"Gerência de Redes ""A""",Quarta-feira,08:30,10:30,Ciência da Computação
+"Gerência de Redes ""A""",Sexta-feira,10:30,11:30,Ciência da Computação
+"Gerência de Redes ""A""",Sexta-feira,11:30,12:30,Ciência da Computação
+Implementação de Banco de Dados,Segunda-feira,10:30,12:30,Ciência da Computação
+Implementação de Banco de Dados,Quarta-feira,10:30,11:30,Ciência da Computação
+Implementação de Banco de Dados,Quarta-feira,11:30,12:30,Ciência da Computação
+Implementação de Linguagens de Programação,Terça-feira,14:30,16:30,Ciência da Computação
+Implementação de Linguagens de Programação,Quinta-feira,14:30,15:30,Ciência da Computação
+Implementação de Linguagens de Programação,Quinta-feira,15:30,16:30,Ciência da Computação
+Internet das Coisas,Segunda-feira,14:30,16:30,Ciência da Computação
+Internet das Coisas,Quarta-feira,14:30,16:30,Ciência da Computação
+Linguagens de Marcação Extensíveis,Quarta-feira,08:30,11:30,Ciência da Computação
+Linguagens de Marcação Extensíveis,Quarta-feira,11:30,12:30,Ciência da Computação
+Maratona de Programação,Segunda-feira,16:30,18:30,Ciência da Computação
+Maratona de Programação,Sexta-feira,10:30,12:30,Ciência da Computação
+Mineração de Dados,Terça-feira,16:30,18:30,Ciência da Computação
+Mineração de Dados,Quinta-feira,16:30,17:30,Ciência da Computação
+Mineração de Dados,Quinta-feira,17:30,18:30,Ciência da Computação
+Modelagem e Simulacao,Sexta-feira,15:30,17:30,Ciência da Computação
+Modelagem e Simulacao,Sábado,10:30,11:30,Ciência da Computação
+Modelagem e Simulacao,Sábado,11:30,12:30,Ciência da Computação
+Projeto de Software II,Terça-feira,13:30,15:30,Ciência da Computação
+Projeto de Software II,Terça-feira,15:30,16:30,Ciência da Computação
+Projeto de Software II,Quarta-feira,13:30,14:30,Ciência da Computação
+Projeto de Software II,Quinta-feira,13:30,16:30,Ciência da Computação
+Projeto de Software II,Sexta-feira,13:30,14:30,Ciência da Computação
+Qualidade de Software,Segunda-feira,10:30,12:30,Ciência da Computação
+Qualidade de Software,Quarta-feira,10:30,11:30,Ciência da Computação
+Qualidade de Software,Quarta-feira,11:30,12:30,Ciência da Computação
+"Sistemas de Informacao Distribuidos ""A""",Terça-feira,10:30,12:30,Ciência da Computação
+"Sistemas de Informacao Distribuidos ""A""",Quinta-feira,10:30,12:30,Ciência da Computação

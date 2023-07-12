@@ -1,13 +1,12 @@
 import csv
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from string import Template
+from urllib.parse import parse_qs, urlparse
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from urllib.parse import parse_qs, urlparse
-
 
 service = Service(executable_path="/usr/local/bin/chromedriver")
 
@@ -57,6 +56,10 @@ def generate_html(data, materia_selecionada=None):
             .filter-label {
                 margin-right: 8px;
             }
+
+            #loading {
+                display: none;
+            }
         </style>
         <script>
             function filterTable() {
@@ -88,6 +91,32 @@ def generate_html(data, materia_selecionada=None):
                     }
                 }
             }
+
+            function loadData() {
+                var inputCourse = document.getElementById('input-course');
+                var course = inputCourse.value;
+                var loading = document.getElementById('loading');
+
+                table.innerHTML = '<tr><th>Materia</th><th>Dia</th><th>Horario Inicio</th><th>Horario Fim</th></tr>';
+                loading.style.display = 'block';
+
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        table.innerHTML += xhr.responseText;
+                        filterTable();
+                        loading.style.display = 'none';
+                    }
+                };
+
+                xhr.open('GET', '/horarios?course=' + course, true);
+                xhr.send();
+            }
+
+            function submitForm(event) {
+                event.preventDefault();
+                loadData();
+            }
         </script>
     </head>
     <body>
@@ -112,6 +141,15 @@ def generate_html(data, materia_selecionada=None):
             <input id="input-end-time" type="time" onchange="filterTable()">
         </div>
 
+        <div class="filter-container">
+            <form onsubmit="submitForm(event)">
+                <label class="filter-label">Curso:</label>
+                <input id="input-course" type="text">
+                <button type="submit">Buscar</button>
+                <span id="loading">Carregando...</span>
+            </form>
+        </div>
+
         <table id="table-horarios">
             <tr>
                 <th>Materia</th>
@@ -127,12 +165,48 @@ def generate_html(data, materia_selecionada=None):
 
     return html_template.substitute(table_rows=table_rows)
 
-# Função para coletar os horários do site da UFSM
-def collect_horarios(curso):
-    horarios = []
+# HTTPRequestHandler personalizado para servir a página HTML
+class RequestHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/':
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html; charset=utf-8')
+            self.end_headers()
 
-    with webdriver.Chrome(service=service) as driver:
-        driver.get(f'https://www.ufsm.br/cursos/graduacao/santa-maria/{curso}/horarios')
+            with open('dados.csv', 'r', encoding='utf-8') as csvfile:
+                reader = csv.DictReader(csvfile)
+                data = [row for row in reader]
+
+            html = generate_html(data)
+            self.wfile.write(html.encode('utf-8'))
+        elif self.path.startswith('/horarios'):
+            query_components = parse_qs(urlparse(self.path).query)
+            course = query_components.get('course', [''])[0]
+
+            with open('dados.csv', 'r', encoding='utf-8') as csvfile:
+                reader = csv.DictReader(csvfile)
+                data = [row for row in reader if row['Curso'] == course]
+
+            html = generate_html(data)
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(html.encode('utf-8'))
+        else:
+            self.send_response(404)
+            self.send_header('Content-type', 'text/html; charset=utf-8')
+            self.end_headers()
+            self.wfile.write('Página não encontrada'.encode('utf-8'))
+
+# Inicializar o driver do Chrome em modo headless
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')
+with webdriver.Chrome(service=service, options=options) as driver:
+    driver.get('https://www.ufsm.br/cursos/graduacao/santa-maria/ciencia-da-computacao/horarios')
+
+    with open('dados.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Materia', 'Dia', 'Horario_inicio', 'Horario_fim', 'Curso'])  # Cabeçalho
 
         semestre = 1
         while True:
@@ -150,7 +224,7 @@ def collect_horarios(curso):
                 for materia in disciplinas:
                     elemento_expansivel = materia.find_element(By.TAG_NAME, 'a')
                     print('Materia:', elemento_expansivel.text)
-                    # Rolar a página para pegar a próxima matéria
+                    # Rolar a página pra pegar a próxima matéria
                     driver.execute_script("arguments[0].scrollIntoView(true);", elemento_expansivel)
                     driver.execute_script("arguments[0].click();", elemento_expansivel)
                     tabela_xpath = './/div[2]/div/div[2]/div/div[2]/table'
@@ -162,59 +236,11 @@ def collect_horarios(curso):
                         dia_semana = elementos[0].text
                         horario_inicio = elementos[1].text
                         horario_fim = elementos[2].text
-                        horarios.append({
-                            'Materia': elemento_expansivel.text,
-                            'Dia': dia_semana,
-                            'Horario_inicio': horario_inicio,
-                            'Horario_fim': horario_fim
-                        })
+                        writer.writerow([elemento_expansivel.text, dia_semana, horario_inicio, horario_fim, 'Ciência da Computação'])
 
                 semestre += 1
             except:
                 break
-
-    return horarios
-
-# HTTPRequestHandler personalizado para servir a página HTML
-class RequestHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        if self.path == '/':
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html; charset=utf-8')
-            self.end_headers()
-            self.wfile.write('Selecione um curso:'.encode('utf-8'))
-            self.wfile.write('<br>'.encode('utf-8'))
-            self.wfile.write('<a href="/horarios?course=ciencia-da-computacao">Ciência da Computação</a>'.encode('utf-8'))
-            self.wfile.write('<br>'.encode('utf-8'))
-            self.wfile.write('<a href="/horarios?course=sistemas-de-informacao">Sistemas de Informação</a>'.encode('utf-8'))
-        elif self.path.startswith('/horarios'):
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html; charset=utf-8')
-            self.end_headers()
-
-            query_components = parse_qs(urlparse(self.path).query)
-            curso_selecionado = query_components.get('course', [None])[0]
-
-            horarios = collect_horarios(curso_selecionado)
-
-            with open('dados.csv', 'w', newline='') as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerow(['Materia', 'Dia', 'Horario_inicio', 'Horario_fim'])  # Cabeçalho
-                for horario in horarios:
-                    writer.writerow([
-                        horario['Materia'],
-                        horario['Dia'],
-                        horario['Horario_inicio'],
-                        horario['Horario_fim']
-                    ])
-
-            html = generate_html(horarios)
-            self.wfile.write(html.encode('utf-8'))
-        else:
-            self.send_response(404)
-            self.send_header('Content-type', 'text/html; charset=utf-8')
-            self.end_headers()
-            self.wfile.write('Página não encontrada'.encode('utf-8'))
 
 # Função para iniciar o servidor HTTP local
 def run_server():
