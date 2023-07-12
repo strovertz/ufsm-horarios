@@ -1,4 +1,5 @@
 import csv
+import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from string import Template
 from urllib.parse import parse_qs, urlparse
@@ -34,6 +35,15 @@ def generate_html(data, materia_selecionada=None):
         <meta charset="UTF-8">
         <title>Horários das Disciplinas</title>
         <style>
+            @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Roboto', sans-serif;  
+            }
+
             table {
                 width: 100%;
                 border-collapse: collapse;
@@ -57,8 +67,19 @@ def generate_html(data, materia_selecionada=None):
                 margin-right: 8px;
             }
 
-            #loading {
-                display: none;
+            .input--section input,
+            .input--section select {
+                width: 100px !important;
+                height: 40px;
+                border-radius: 10px;
+                border: none;
+                background-color: rgb(230, 230, 230);
+            }
+
+            .info--section h1 {
+                font-weight: bolder;
+                font-size: 2.5rem;
+                color: #fff;
             }
         </style>
         <script>
@@ -66,10 +87,12 @@ def generate_html(data, materia_selecionada=None):
                 var inputDay = document.getElementById('input-day');
                 var inputStartTime = document.getElementById('input-start-time');
                 var inputEndTime = document.getElementById('input-end-time');
+                var inputMateria = document.getElementById('input-materia');
 
                 var day = inputDay.value;
                 var startTime = inputStartTime.value;
                 var endTime = inputEndTime.value;
+                var materia = inputMateria.value;
 
                 var table = document.getElementById('table-horarios');
                 var rows = table.getElementsByTagName('tr');
@@ -80,74 +103,50 @@ def generate_html(data, materia_selecionada=None):
                     var dia = cells[1].innerText;
                     var horarioInicio = cells[2].innerText;
                     var horarioFim = cells[3].innerText;
+                    var materiaText = cells[0].innerText;
 
                     var matchDay = day === 'Todos' || dia === day;
                     var matchTime = startTime === '' && endTime === '' || horarioInicio >= startTime && horarioFim <= endTime;
+                    var matchMateria = materia === 'Todas' || materiaText === materia;
 
-                    if (matchDay && matchTime) {
+                    if (matchDay && matchTime && matchMateria) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
                     }
                 }
             }
-
-            function loadData() {
-                var inputCourse = document.getElementById('input-course');
-                var course = inputCourse.value;
-                var loading = document.getElementById('loading');
-
-                table.innerHTML = '<tr><th>Materia</th><th>Dia</th><th>Horario Inicio</th><th>Horario Fim</th></tr>';
-                loading.style.display = 'block';
-
-                var xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        table.innerHTML += xhr.responseText;
-                        filterTable();
-                        loading.style.display = 'none';
-                    }
-                };
-
-                xhr.open('GET', '/horarios?course=' + course, true);
-                xhr.send();
-            }
-
-            function submitForm(event) {
-                event.preventDefault();
-                loadData();
-            }
         </script>
     </head>
     <body>
-        <h1>Horários das Disciplinas</h1>
-
         <div class="filter-container">
-            <label class="filter-label">Dia:</label>
-            <select id="input-day" onchange="filterTable()">
-                <option value="Todos">Todos</option>
-                <option value="Segunda-feira">Segunda-feira</option>
-                <option value="Terça-feira">Terça-feira</option>
-                <option value="Quarta-feira">Quarta-feira</option>
-                <option value="Quinta-feira">Quinta-feira</option>
-                <option value="Sexta-feira">Sexta-feira</option>
-                <option value="Sábado">Sábado</option>
-            </select>
+            <div class="info--section">
+                <h1>Horários das Disciplinas</h1>
+            </div>
+            <div class="input--section">
+                <label class="filter-label">Dia:</label>
+                <select id="input-day" onchange="filterTable()">
+                    <option value="Todos">Todos</option>
+                    <option value="Segunda-feira">Segunda-feira</option>
+                    <option value="Terça-feira">Terça-feira</option>
+                    <option value="Quarta-feira">Quarta-feira</option>
+                    <option value="Quinta-feira">Quinta-feira</option>
+                    <option value="Sexta-feira">Sexta-feira</option>
+                    <option value="Sábado">Sábado</option>
+                </select>
 
-            <label class="filter-label">Horário Início:</label>
-            <input id="input-start-time" type="time" onchange="filterTable()">
+                <label class="filter-label">Horário Início:</label>
+                <input id="input-start-time" type="time" onchange="filterTable()">
 
-            <label class="filter-label">Horário Fim:</label>
-            <input id="input-end-time" type="time" onchange="filterTable()">
-        </div>
+                <label class="filter-label">Horário Fim:</label>
+                <input id="input-end-time" type="time" onchange="filterTable()">
 
-        <div class="filter-container">
-            <form onsubmit="submitForm(event)">
-                <label class="filter-label">Curso:</label>
-                <input id="input-course" type="text">
-                <button type="submit">Buscar</button>
-                <span id="loading">Carregando...</span>
-            </form>
+                <label class="filter-label">Matéria:</label>
+                <select id="input-materia" onchange="filterTable()">
+                    <option value="Todas">Todas</option>
+                    $materia_options
+                </select>
+            </div>
         </div>
 
         <table id="table-horarios">
@@ -163,34 +162,40 @@ def generate_html(data, materia_selecionada=None):
     </html>
     ''')
 
-    return html_template.substitute(table_rows=table_rows)
+    materia_options = ''
+    materias = set()
+    for row in data:
+        materias.add(row['Materia'])
+
+    for materia in materias:
+        materia_options += f"<option value='{materia}'>{materia}</option>"
+
+    return html_template.substitute(table_rows=table_rows, materia_options=materia_options)
+
+# Exportar horários para um arquivo JSON
+def export_to_json(data):
+    with open('horarios.json', 'w') as json_file:
+        json.dump(data, json_file)
+
+# Carregar horários do arquivo JSON
+def load_from_json():
+    try:
+        with open('horarios.json', 'r') as json_file:
+            return json.load(json_file)
+    except FileNotFoundError:
+        return []
 
 # HTTPRequestHandler personalizado para servir a página HTML
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path == '/':
+        if self.path == '/horarios':
             self.send_response(200)
             self.send_header('Content-type', 'text/html; charset=utf-8')
             self.end_headers()
 
-            with open('dados.csv', 'r', encoding='utf-8') as csvfile:
-                reader = csv.DictReader(csvfile)
-                data = [row for row in reader]
-
-            html = generate_html(data)
-            self.wfile.write(html.encode('utf-8'))
-        elif self.path.startswith('/horarios'):
-            query_components = parse_qs(urlparse(self.path).query)
-            course = query_components.get('course', [''])[0]
-
-            with open('dados.csv', 'r', encoding='utf-8') as csvfile:
-                reader = csv.DictReader(csvfile)
-                data = [row for row in reader if row['Curso'] == course]
-
-            html = generate_html(data)
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html; charset=utf-8')
-            self.end_headers()
+            data = load_from_json()
+            materia_selecionada = parse_qs(urlparse(self.path).query).get('Materia', [''])[0]
+            html = generate_html(data, materia_selecionada)
             self.wfile.write(html.encode('utf-8'))
         else:
             self.send_response(404)
@@ -198,49 +203,76 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write('Página não encontrada'.encode('utf-8'))
 
-# Inicializar o driver do Chrome em modo headless
+    def do_POST(self):
+        if self.path == '/search':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length).decode('utf-8')
+            parsed_data = parse_qs(post_data)
+            materia = parsed_data.get('materia', [''])[0]
+
+            query_string = f"/horarios?Materia={materia}"
+            self.send_response(303)
+            self.send_header('Location', query_string)
+            self.end_headers()
+        else:
+            self.send_response(404)
+            self.send_header('Content-type', 'text/html; charset=utf-8')
+            self.end_headers()
+            self.wfile.write('Página não encontrada'.encode('utf-8'))
+
+# Inicializar o driver do Chrome
 options = webdriver.ChromeOptions()
 options.add_argument('--headless')
 with webdriver.Chrome(service=service, options=options) as driver:
     driver.get('https://www.ufsm.br/cursos/graduacao/santa-maria/ciencia-da-computacao/horarios')
 
-    with open('dados.csv', 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(['Materia', 'Dia', 'Horario_inicio', 'Horario_fim', 'Curso'])  # Cabeçalho
+    data = load_from_json()
+    if not data:
+        with open('dados.csv', 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['Materia', 'Dia', 'Horario_inicio', 'Horario_fim'])  # Cabeçalho
 
-        semestre = 1
-        while True:
-            semestre_xpath = f'/html/body/main/div[2]/div/section/article/div/div[3]/div/div[5]/div[{semestre}]/div[1]/a'
-            try:
-                semestre_elemento = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, semestre_xpath)))
-                print('\nSemestre:', semestre_elemento.text)
+            semestre = 1
+            while True:
+                semestre_xpath = f'/html/body/main/div[2]/div/section/article/div/div[3]/div/div[5]/div[{semestre}]/div[1]/a'
+                try:
+                    semestre_elemento = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, semestre_xpath)))
+                    print('\nSemestre:', semestre_elemento.text)
 
-                disciplinas_xpath = f'/html/body/main/div[2]/div/section/article/div/div[3]/div/div[5]/div[{semestre}]/div[2]/div/div/div[1]/div'
-                disciplinas = driver.find_elements(By.XPATH, disciplinas_xpath)
+                    disciplinas_xpath = f'/html/body/main/div[2]/div/section/article/div/div[3]/div/div[5]/div[{semestre}]/div[2]/div/div/div[1]/div'
+                    disciplinas = driver.find_elements(By.XPATH, disciplinas_xpath)
 
-                if not disciplinas:
+                    if not disciplinas:
+                        break
+
+                    for materia in disciplinas:
+                        elemento_expansivel = materia.find_element(By.TAG_NAME, 'a')
+                        print('Materia:', elemento_expansivel.text)
+                        # Rolar a página pra pegar a próxima matéria
+                        driver.execute_script("arguments[0].scrollIntoView(true);", elemento_expansivel)
+                        driver.execute_script("arguments[0].click();", elemento_expansivel)
+                        tabela_xpath = './/div[2]/div/div[2]/div/div[2]/table'
+                        tabela = WebDriverWait(materia, 10).until(EC.visibility_of_element_located((By.XPATH, tabela_xpath)))
+                        linhas = tabela.find_elements(By.TAG_NAME, 'tr')
+
+                        for linha in linhas[1:]:  # Ignorar a primeira linha (cabeçalho da tabela)
+                            elementos = linha.find_elements(By.TAG_NAME, 'td')
+                            dia_semana = elementos[0].text
+                            horario_inicio = elementos[1].text
+                            horario_fim = elementos[2].text
+                            writer.writerow([elemento_expansivel.text, dia_semana, horario_inicio, horario_fim])
+
+                    semestre += 1
+                except:
                     break
 
-                for materia in disciplinas:
-                    elemento_expansivel = materia.find_element(By.TAG_NAME, 'a')
-                    print('Materia:', elemento_expansivel.text)
-                    # Rolar a página pra pegar a próxima matéria
-                    driver.execute_script("arguments[0].scrollIntoView(true);", elemento_expansivel)
-                    driver.execute_script("arguments[0].click();", elemento_expansivel)
-                    tabela_xpath = './/div[2]/div/div[2]/div/div[2]/table'
-                    tabela = WebDriverWait(materia, 10).until(EC.visibility_of_element_located((By.XPATH, tabela_xpath)))
-                    linhas = tabela.find_elements(By.TAG_NAME, 'tr')
+        # Carregar dados do arquivo CSV
+        with open('dados.csv', 'r', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            data = [row for row in reader]
 
-                    for linha in linhas[1:]:  # Ignorar a primeira linha (cabeçalho da tabela)
-                        elementos = linha.find_elements(By.TAG_NAME, 'td')
-                        dia_semana = elementos[0].text
-                        horario_inicio = elementos[1].text
-                        horario_fim = elementos[2].text
-                        writer.writerow([elemento_expansivel.text, dia_semana, horario_inicio, horario_fim, 'Ciência da Computação'])
-
-                semestre += 1
-            except:
-                break
+        # Exportar dados para arquivo JSON
+        export_to_json(data)
 
 # Função para iniciar o servidor HTTP local
 def run_server():
