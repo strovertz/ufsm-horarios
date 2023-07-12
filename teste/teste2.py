@@ -1,10 +1,10 @@
 import csv
+import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from urllib.parse import urlparse, parse_qs
 from string import Template
+from urllib.parse import parse_qs, urlparse
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -35,6 +35,15 @@ def generate_html(data, materia_selecionada=None):
         <meta charset="UTF-8">
         <title>Horários das Disciplinas</title>
         <style>
+            @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Roboto', sans-serif;  
+            }
+
             table {
                 width: 100%;
                 border-collapse: collapse;
@@ -57,73 +66,87 @@ def generate_html(data, materia_selecionada=None):
             .filter-label {
                 margin-right: 8px;
             }
+
+            .input--section input,
+            .input--section select {
+                width: 100px !important;
+                height: 40px;
+                border-radius: 10px;
+                border: none;
+                background-color: rgb(230, 230, 230);
+            }
+
+            .info--section h1 {
+                font-weight: bolder;
+                font-size: 2.5rem;
+                color: #fff;
+            }
         </style>
         <script>
             function filterTable() {
                 var inputDay = document.getElementById('input-day');
                 var inputStartTime = document.getElementById('input-start-time');
                 var inputEndTime = document.getElementById('input-end-time');
+                var inputMateria = document.getElementById('input-materia');
 
                 var day = inputDay.value;
                 var startTime = inputStartTime.value;
                 var endTime = inputEndTime.value;
+                var materia = inputMateria.value;
 
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', '/horarios', true);
-                xhr.setRequestHeader('Materia', day);
-                xhr.onload = function () {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        var table = document.getElementById('table-horarios');
-                        table.innerHTML = xhr.responseText;
-                    }
-                };
-                xhr.send();
-            }
-            
-            function submitForm(event) {
-                event.preventDefault();
-                var form = document.getElementById('course-form');
-                var inputCourse = document.getElementById('input-course');
-                var course = inputCourse.value.trim();
+                var table = document.getElementById('table-horarios');
+                var rows = table.getElementsByTagName('tr');
 
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', '/horarios?course=' + course, true);
-                xhr.onload = function () {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        var table = document.getElementById('table-horarios');
-                        table.innerHTML = xhr.responseText;
+                for (var i = 1; i < rows.length; i++) {
+                    var row = rows[i];
+                    var cells = row.getElementsByTagName('td');
+                    var dia = cells[1].innerText;
+                    var horarioInicio = cells[2].innerText;
+                    var horarioFim = cells[3].innerText;
+                    var materiaText = cells[0].innerText;
+
+                    var matchDay = day === 'Todos' || dia === day;
+                    var matchTime = startTime === '' && endTime === '' || horarioInicio >= startTime && horarioFim <= endTime;
+                    var matchMateria = materia === 'Todas' || materiaText === materia;
+
+                    if (matchDay && matchTime && matchMateria) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
                     }
-                };
-                xhr.send();
+                }
             }
         </script>
     </head>
     <body>
-        <h1>Horários das Disciplinas</h1>
-
         <div class="filter-container">
-            <form id="course-form" onsubmit="submitForm(event)">
-                <label class="filter-label" for="input-course">Curso:</label>
-                <input id="input-course" type="text" name="course">
-                <button type="submit">Selecionar</button>
-            </form>
+            <div class="info--section">
+                <h1>Horários das Disciplinas</h1>
+            </div>
+            <div class="input--section">
+                <label class="filter-label">Dia:</label>
+                <select id="input-day" onchange="filterTable()">
+                    <option value="Todos">Todos</option>
+                    <option value="Segunda-feira">Segunda-feira</option>
+                    <option value="Terça-feira">Terça-feira</option>
+                    <option value="Quarta-feira">Quarta-feira</option>
+                    <option value="Quinta-feira">Quinta-feira</option>
+                    <option value="Sexta-feira">Sexta-feira</option>
+                    <option value="Sábado">Sábado</option>
+                </select>
 
-            <label class="filter-label">Dia:</label>
-            <select id="input-day" onchange="filterTable()">
-                <option value="Todos">Todos</option>
-                <option value="Segunda-feira">Segunda-feira</option>
-                <option value="Terça-feira">Terça-feira</option>
-                <option value="Quarta-feira">Quarta-feira</option>
-                <option value="Quinta-feira">Quinta-feira</option>
-                <option value="Sexta-feira">Sexta-feira</option>
-                <option value="Sábado">Sábado</option>
-            </select>
+                <label class="filter-label">Horário Início:</label>
+                <input id="input-start-time" type="time" onchange="filterTable()">
 
-            <label class="filter-label">Horário Início:</label>
-            <input id="input-start-time" type="time" onchange="filterTable()">
+                <label class="filter-label">Horário Fim:</label>
+                <input id="input-end-time" type="time" onchange="filterTable()">
 
-            <label class="filter-label">Horário Fim:</label>
-            <input id="input-end-time" type="time" onchange="filterTable()">
+                <label class="filter-label">Matéria:</label>
+                <select id="input-materia" onchange="filterTable()">
+                    <option value="Todas">Todas</option>
+                    $materia_options
+                </select>
+            </div>
         </div>
 
         <table id="table-horarios">
@@ -139,31 +162,39 @@ def generate_html(data, materia_selecionada=None):
     </html>
     ''')
 
-    return html_template.substitute(table_rows=table_rows)
+    materia_options = ''
+    materias = set()
+    for row in data:
+        materias.add(row['Materia'])
+
+    for materia in materias:
+        materia_options += f"<option value='{materia}'>{materia}</option>"
+
+    return html_template.substitute(table_rows=table_rows, materia_options=materia_options)
+
+# Exportar horários para um arquivo JSON
+def export_to_json(data):
+    with open('horarios.json', 'w') as json_file:
+        json.dump(data, json_file)
+
+# Carregar horários do arquivo JSON
+def load_from_json():
+    try:
+        with open('horarios.json', 'r') as json_file:
+            return json.load(json_file)
+    except FileNotFoundError:
+        return []
 
 # HTTPRequestHandler personalizado para servir a página HTML
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path == '/':
+        if self.path == '/horarios':
             self.send_response(200)
             self.send_header('Content-type', 'text/html; charset=utf-8')
             self.end_headers()
 
-            with open('index.html', 'r') as file:
-                self.wfile.write(file.read().encode('utf-8'))
-        elif self.path == '/horarios':
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html; charset=utf-8')
-            self.end_headers()
-
-            data = []
-            with open('dados.csv', 'r', encoding='utf-8') as csvfile:
-                reader = csv.DictReader(csvfile)
-                data = [row for row in reader]
-
-            query_components = parse_qs(urlparse(self.path).query)
-            materia_selecionada = query_components.get('course', [None])[0]
-
+            data = load_from_json()
+            materia_selecionada = parse_qs(urlparse(self.path).query).get('Materia', [''])[0]
             html = generate_html(data, materia_selecionada)
             self.wfile.write(html.encode('utf-8'))
         else:
@@ -172,21 +203,31 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write('Página não encontrada'.encode('utf-8'))
 
-# Inicializar o driver do Chrome com a opção headless
-chrome_options = Options()
-chrome_options.add_argument('--headless')
+    def do_POST(self):
+        if self.path == '/search':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length).decode('utf-8')
+            parsed_data = parse_qs(post_data)
+            materia = parsed_data.get('materia', [''])[0]
 
-def run_server():
-    server_address = ('', 8000)
-    httpd = HTTPServer(server_address, RequestHandler)
-    print('Servidor iniciado em http://localhost:8000')
-    httpd.serve_forever()
+            query_string = f"/horarios?Materia={materia}"
+            self.send_response(303)
+            self.send_header('Location', query_string)
+            self.end_headers()
+        else:
+            self.send_response(404)
+            self.send_header('Content-type', 'text/html; charset=utf-8')
+            self.end_headers()
+            self.wfile.write('Página não encontrada'.encode('utf-8'))
 
-def start_webdriver(course):
-    with webdriver.Chrome(service=service, options=chrome_options) as driver:
-        url = f'https://www.ufsm.br/cursos/graduacao/santa-maria/{course}/horarios'
-        driver.get(url)
+# Inicializar o driver do Chrome
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')
+with webdriver.Chrome(service=service, options=options) as driver:
+    driver.get('https://www.ufsm.br/cursos/graduacao/santa-maria/ciencia-da-computacao/horarios')
 
+    data = load_from_json()
+    if not data:
         with open('dados.csv', 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(['Materia', 'Dia', 'Horario_inicio', 'Horario_fim'])  # Cabeçalho
@@ -224,5 +265,20 @@ def start_webdriver(course):
                     semestre += 1
                 except:
                     break
+
+        # Carregar dados do arquivo CSV
+        with open('dados.csv', 'r', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            data = [row for row in reader]
+
+        # Exportar dados para arquivo JSON
+        export_to_json(data)
+
+# Função para iniciar o servidor HTTP local
+def run_server():
+    server_address = ('', 8000)
+    httpd = HTTPServer(server_address, RequestHandler)
+    print('Servidor iniciado em http://localhost:8000')
+    httpd.serve_forever()
 
 run_server()

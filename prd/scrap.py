@@ -195,7 +195,9 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.wfile.write('Página não encontrada'.encode('utf-8'))
 
 # Inicializar o driver do Chrome
-with webdriver.Chrome(service=service) as driver:
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')
+with webdriver.Chrome(service=service, options=options) as driver:
     driver.get('https://www.ufsm.br/cursos/graduacao/santa-maria/ciencia-da-computacao/horarios')
 
     with open('dados.csv', 'w', newline='') as csvfile:
