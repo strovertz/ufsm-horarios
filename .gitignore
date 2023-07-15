@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+#terraform ignore
+*.tfstate
+*.hcl
+**/.terraform/**
 # Distribution / packaging
 .Python
 build/
@@ -33,7 +37,7 @@ MANIFEST
 *.spec
 
 #mongodb creds
-creds.txt
+**/credentials-mongo
 
 # Installer logs
 pip-log.txt
