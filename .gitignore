@@ -32,6 +32,9 @@ MANIFEST
 *.manifest
 *.spec
 
+#mongodb creds
+creds.txt
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt

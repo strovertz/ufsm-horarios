@@ -1,5 +1,6 @@
 import csv
 import json
+import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from string import Template
 from urllib.parse import parse_qs, urlparse
@@ -171,63 +172,35 @@ def generate_html(data, materia_selecionada=None):
         materia_options += f"<option value='{materia}'>{materia}</option>"
 
     return html_template.substitute(table_rows=table_rows, materia_options=materia_options)
-
+''
 # Exportar horários para um arquivo JSON
-def export_to_json(data):
-    with open('horarios.json', 'w') as json_file:
+def export_to_json(data, nome_curso):
+    nome_arquivo = f'../horarios/horarios_{nome_curso}.json'
+    with open(nome_arquivo, 'w') as json_file:
         json.dump(data, json_file)
 
 # Carregar horários do arquivo JSON
-def load_from_json():
+def load_from_json(nome_curso):
     try:
-        with open('horarios.json', 'r') as json_file:
-            return json.load(json_file)
+        nome_arquivo = f'../horarios/horarios_{nome_curso}.json'
+        with open(nome_arquivo, 'r') as json_file:
+            data = json.load(json_file)
+            return data
     except FileNotFoundError:
         return []
 
-# HTTPRequestHandler personalizado para servir a página HTML
-class RequestHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        if self.path == '/horarios':
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html; charset=utf-8')
-            self.end_headers()
+# Verificar se existe um arquivo JSON correspondente ao curso
+def json_exists(nome_curso):
+    nome_arquivo = f'../horarios/horarios_{nome_curso}.json'
+    return os.path.isfile(nome_arquivo)
 
-            data = load_from_json()
-            materia_selecionada = parse_qs(urlparse(self.path).query).get('Materia', [''])[0]
-            html = generate_html(data, materia_selecionada)
-            self.wfile.write(html.encode('utf-8'))
-        else:
-            self.send_response(404)
-            self.send_header('Content-type', 'text/html; charset=utf-8')
-            self.end_headers()
-            self.wfile.write('Página não encontrada'.encode('utf-8'))
+# Função para fazer o scraping dos horários das disciplinas
+def scrape_horarios(nome_curso):
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    with webdriver.Chrome(service=service, options=options) as driver:
+        driver.get(f'https://www.ufsm.br/cursos/graduacao/santa-maria/{nome_curso}/horarios')
 
-    def do_POST(self):
-        if self.path == '/search':
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length).decode('utf-8')
-            parsed_data = parse_qs(post_data)
-            materia = parsed_data.get('materia', [''])[0]
-
-            query_string = f"/horarios?Materia={materia}"
-            self.send_response(303)
-            self.send_header('Location', query_string)
-            self.end_headers()
-        else:
-            self.send_response(404)
-            self.send_header('Content-type', 'text/html; charset=utf-8')
-            self.end_headers()
-            self.wfile.write('Página não encontrada'.encode('utf-8'))
-
-# Inicializar o driver do Chrome
-options = webdriver.ChromeOptions()
-options.add_argument('--headless')
-with webdriver.Chrome(service=service, options=options) as driver:
-    driver.get('https://www.ufsm.br/cursos/graduacao/santa-maria/ciencia-da-computacao/horarios')
-
-    data = load_from_json()
-    if not data:
         with open('dados.csv', 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(['Materia', 'Dia', 'Horario_inicio', 'Horario_fim'])  # Cabeçalho
@@ -270,9 +243,53 @@ with webdriver.Chrome(service=service, options=options) as driver:
         with open('dados.csv', 'r', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
             data = [row for row in reader]
-
         # Exportar dados para arquivo JSON
-        export_to_json(data)
+        export_to_json(data, nome_curso)
+
+# HTTPRequestHandler personalizado para servir a página HTML
+class RequestHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/horarios':
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html; charset=utf-8')
+            self.end_headers()
+
+            parsed_query = parse_qs(urlparse(self.path).query)
+            materia_selecionada = parsed_query.get('Materia', [''])[0]
+
+            data = []
+            for nome_curso in os.listdir('../horarios'):
+                if nome_curso.endswith('.json'):
+                    nome_curso = nome_curso.split('_')[1].split('.')[0]
+                    if not json_exists(nome_curso):
+                        scrape_horarios(nome_curso)
+                    data += load_from_json(nome_curso)
+
+            html = generate_html(data, materia_selecionada)
+            self.wfile.write(html.encode('utf-8'))
+        else:
+            self.send_response(404)
+            self.send_header('Content-type', 'text/html; charset=utf-8')
+            self.end_headers()
+            self.wfile.write('Página não encontrada'.encode('utf-8'))
+
+    def do_POST(self):
+        if self.path == '/search':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length).decode('utf-8')
+            parsed_data = parse_qs(post_data)
+            materia = parsed_data.get('materia', [''])[0]
+            curso = 'sistemas-de-informacao'
+
+            query_string = f"/horarios?Materia={materia}&Curso={curso}"
+            self.send_response(303)
+            self.send_header('Location', query_string)
+            self.end_headers()
+        else:
+            self.send_response(404)
+            self.send_header('Content-type', 'text/html; charset=utf-8')
+            self.end_headers()
+            self.wfile.write('Página não encontrada'.encode('utf-8'))
 
 # Função para iniciar o servidor HTTP local
 def run_server():
