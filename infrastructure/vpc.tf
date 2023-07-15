@@ -13,7 +13,7 @@ resource "aws_security_group" "mysecgroup" {
 
   name   = "ec2-sec-ports"
   vpc_id = aws_vpc.grafanasql-vpc.id
-  
+
   ingress {
     from_port   = 80 # Porta padrão do HTTP
     to_port     = 80 # Porta padrão do HTTP
@@ -22,8 +22,8 @@ resource "aws_security_group" "mysecgroup" {
   }
 
   ingress {
-    from_port   = 3000 # Porta padrão do Grafana
-    to_port     = 3000 # Porta padrão do Grafana
+    from_port   = 5000# Porta padrão do Grafana
+    to_port     = 5000 # Porta padrão do Grafana
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"] # Exemplo de dois intervalos de rede permitidos
   }
@@ -44,7 +44,7 @@ resource "aws_security_group" "mysecgroup" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
-  #ssh ingress 
+  #ssh ingress
   ingress {
     from_port   = 22
     to_port     = 22
@@ -83,14 +83,14 @@ resource "aws_subnet" "prod-subnet-public-1" {
   availability_zone       = "us-east-1a"
 }
 
-resource "aws_eip" "grafana_eip" {
+resource "aws_eip" "eip" {
   instance = aws_instance.grafana.id
   vpc      = true
 }
 
 resource "aws_security_group" "internal" {
-  name        = var.grafana-sg
-  description = "Security Group for Grafana internal access"
+  name        = var.docker-sg
+  description = "Security Group general"
 
   vpc_id = var.vpc_default
 }

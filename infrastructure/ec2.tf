@@ -9,7 +9,7 @@ resource "aws_volume_attachment" "ebs_att" {
   instance_id = aws_instance.grafana.id
 }
 
-resource "aws_instance" "grafana" {
+resource "aws_instance" "docker" {
   ami                    = var.instance_ami
   instance_type          = var.instance_type
   tags                   = var.instance_tags
@@ -17,54 +17,10 @@ resource "aws_instance" "grafana" {
   subnet_id              = aws_subnet.prod-subnet-public-1.id
   key_name               = aws_key_pair.aws-key.id
 
-  #Jogar o script pra instancia
-  provisioner "file" {
-    source      = "../automations/separate_rows.py"
-    destination = "/tmp/separate_rows.py"
-  }
-  provisioner "file" {
-    source      = "../automations/mysql-grafana.py"
-    destination = "/tmp/mysql-grafana.py"
-  }
-  provisioner "file" {
-    source      = "../original_datasets/credits.csv"
-    destination = "/tmp/credits.csv"
-  }
-  provisioner "file" {
-    source      = "../original_datasets/titles.csv"
-    destination = "/tmp/titles.csv"
-  }
-  provisioner "file" {
-    source      = "./internal-scripts/userdata.sh"
-    destination = "/tmp/userdata.sh"
-  }
-  provisioner "file" {
-    source      = "../automations/insert_data.py"
-    destination = "/tmp/insert_data.py"
-  }
-  #Rodar o  script
+  #Clonar o repositório
   provisioner "remote-exec" {
     inline = [
-      "chmod +x /tmp/userdata.sh",
-      "sudo /tmp/userdata.sh"
-    ]
-  }
-    provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/separate_rows.py",
-      "sudo python3 /tmp/separate_rows.py"
-    ]
-  }
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/insert_data.py",
-      "sudo python3 /tmp/insert_data.py"
-    ]
-  }
-   provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/mysql-grafana.py",
-      "sudo python3 /tmp/mysql-grafana.py"
+      "git clone https://github.com/strovertz/ufsm-horarios.git",
     ]
   }
 

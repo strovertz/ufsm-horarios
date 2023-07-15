@@ -1,6 +1,6 @@
-variable "grafana-sg" {
+variable "docker-sg" {
   type    = string
-  default = "grafana-internal-sg"
+  default = "internal-sg"
 }
 
 variable "aws_profile" {
@@ -75,8 +75,9 @@ variable "instance_tags" {
   type = map(string)
   description = "tags"
   default = {
-    Name = "Servidor-grafana-mysql"
-    Project = "Fundamentos-banco-dados"
+    provisioned = "terraform"
+    Project = "ufsm-horarios"
+    Git = "github.com/strovertz/ufsm-horarios"
   }
 }
 
@@ -102,5 +103,5 @@ variable "ebs-id" {
   description = "EBS ID - 10 GB"
   type = string
   default = "vol-0e4b7edecf39cff8f"
-  
+
 }
