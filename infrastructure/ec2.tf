@@ -1,12 +1,12 @@
 resource "aws_key_pair" "aws-key" {
-  key_name   = "makey"
+  key_name   = "docker-key"
   public_key = file(var.PUBLIC_KEY_PATH) // Path is in the variables file
 }
 
 resource "aws_volume_attachment" "ebs_att" {
   device_name = "/dev/sdh"
   volume_id   = var.ebs-id
-  instance_id = aws_instance.grafana.id
+  instance_id = aws_instance.docker.id
 }
 
 resource "aws_instance" "docker" {

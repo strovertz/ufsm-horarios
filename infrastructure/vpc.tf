@@ -1,4 +1,4 @@
-resource "aws_vpc" "grafanasql-vpc" {
+resource "aws_vpc" "docker-vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = "true"
   enable_dns_hostnames = "true"
@@ -6,13 +6,13 @@ resource "aws_vpc" "grafanasql-vpc" {
 }
 
 resource "aws_internet_gateway" "prod-igw" {
-  vpc_id = aws_vpc.grafanasql-vpc.id
+  vpc_id = aws_vpc.docker-vpc.id
 }
 
 resource "aws_security_group" "mysecgroup" {
 
   name   = "ec2-sec-ports"
-  vpc_id = aws_vpc.grafanasql-vpc.id
+  vpc_id = aws_vpc.docker-vpc.id
 
   ingress {
     from_port   = 80 # Porta padrão do HTTP
@@ -61,7 +61,7 @@ resource "aws_security_group" "mysecgroup" {
 }
 
 resource "aws_route_table" "prod-public-crt" {
-  vpc_id = aws_vpc.grafanasql-vpc.id
+  vpc_id = aws_vpc.docker-vpc.id
   route {
     cidr_block = "0.0.0.0/0"                      // A subnet associada pode alcançar qq um
     gateway_id = aws_internet_gateway.prod-igw.id //CTR utiliza esse ift para alcançar a interner
@@ -77,14 +77,14 @@ resource "aws_route_table_association" "prod-crta-public-subnet-1" {
 } #cria uma conexão entre a subnet e a route table
 
 resource "aws_subnet" "prod-subnet-public-1" {
-  vpc_id                  = aws_vpc.grafanasql-vpc.id // Referencing the id of the VPC from abouve code block
+  vpc_id                  = aws_vpc.docker-vpc.id // Referencing the id of the VPC from abouve code block
   cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = "true" // Makes this a public subnet
   availability_zone       = "us-east-1a"
 }
 
 resource "aws_eip" "eip" {
-  instance = aws_instance.grafana.id
+  instance = aws_instance.docker.id
   vpc      = true
 }
 
