@@ -99,9 +99,47 @@
                 }
             }
         }
+
+        // Função para fazer a requisição GET
+        function getHorarios() {
+            var url = 'http://52.202.32.31:5000/api/campi/santa-maria/cursos/ciencia-da-computacao/horarios';
+
+            // Fazer a requisição GET usando o objeto XMLHttpRequest
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    // Sucesso na requisição, manipular a resposta
+                    var horarios = JSON.parse(xhr.responseText);
+                    // Gerar as linhas da tabela com base nos dados retornados
+                    var tableRows = '';
+                    for (var i = 0; i < horarios.length; i++) {
+                        var horario = horarios[i];
+                        // Adicionar os dados na tabela
+                        tableRows += '<tr>';
+                        tableRows += '<td>' + horario.disciplina + '</td>';
+                        tableRows += '<td>' + horario.dia_semana + '</td>';
+                        tableRows += '<td>' + horario.horario_inicio + '</td>';
+                        tableRows += '<td>' + horario.horario_fim + '</td>';
+                        tableRows += '</tr>';
+                    }
+                    // Atualizar o conteúdo da tabela
+                    var table = document.getElementById('table-horarios');
+                    table.innerHTML = tableRows;
+                } else {
+                    // Tratar erros na requisição
+                    console.error('Erro na requisição: ' + xhr.status);
+                }
+            };
+            xhr.onerror = function () {
+                // Tratar erros de conexão
+                console.error('Erro de conexão.');
+            };
+            xhr.send();
+        }
     </script>
 </head>
-<body>
+<body onload="getHorarios()">
     <div class="filter-container">
         <div class="info--section">
             <h1>Horários das Disciplinas</h1>
@@ -133,7 +171,6 @@
             <th>Horário Início</th>
             <th>Horário Fim</th>
         </tr>
-        $table_rows
     </table>
 </body>
 </html>
