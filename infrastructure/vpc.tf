@@ -22,8 +22,14 @@ resource "aws_security_group" "mysecgroup" {
   }
 
   ingress {
-    from_port   = 5000# Porta padrão do Grafana
-    to_port     = 5000 # Porta padrão do Grafana
+    from_port   = 5000#
+    to_port     = 5000 #
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Exemplo de dois intervalos de rede permitidos
+  }
+  ingress {
+    from_port   = 8080#
+    to_port     = 8080 #
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"] # Exemplo de dois intervalos de rede permitidos
   }
