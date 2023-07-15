@@ -6,9 +6,7 @@ Para subir a API, execute o comando `docker compose up -d` no diretório raíz d
 
 ## Endpoints
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-#### Obter todos os horários de disciplinas de um curso de um campus
+#### Obter todos os horários de disciplinas de um curso de um campus da UFSM
 
 <details>
 <summary><code>GET</code> <code><b>/api/campi/{campus}/cursos/{curso}/horarios</b></code></summary>
@@ -24,7 +22,7 @@ Para subir a API, execute o comando `docker compose up -d` no diretório raíz d
 
 > | Código de status HTTP | Tipo                       | Resposta                                    |
 > | :-------------------- | :------------------------- | :------------------------------------------ |
-> | `200`                 | `application/json`         | [`HorariosDisciplina`](#Schemas)            |
+> | `200`                 | `application/json`         | `HorariosDisciplina[]`                      |
 > | `400`                 | `application/json`         | `{"code": "400", "message": "Bad request"}` |
 
 ##### Exemplo cURL
@@ -59,6 +57,74 @@ Para subir a API, execute o comando `docker compose up -d` no diretório raíz d
 > | `vagas_aumentadas`         | `number`   | `0`                                                          |
 > | `vagas_ocupadas`           | `number`   | `0`                                                          |
 > | `vagas_oferecidas`         | `number`   | `15`                                                         |
+
+</details>
+
+</details>
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#### Obter todos os campi da UFSM
+
+<details>
+<summary><code>GET</code> <code><b>/api/campi</b></code></summary>
+
+##### Respostas
+
+> | Código de status HTTP | Tipo                       | Resposta   |
+> | :-------------------- | :------------------------- | :--------- |
+> | `200`                 | `application/json`         | `Campus[]` |
+
+##### Exemplo cURL
+
+> ```javascript
+>  curl http://localhost:5000/api/campi
+> ```
+
+##### Schemas
+
+<details>
+<summary><code>Campus</code></summary>
+<br>
+
+> | Campo           | Tipo     | Exemplo         |
+> | :-------------- | :------- | :-------------- |
+> | `nome_exibicao` | `string` | `"Santa Maria"` |
+> | `nome_url`      | `string` | `"santa-maria"` |
+
+</details>
+
+</details>
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#### Obter todos os cursos da UFSM
+
+<details>
+<summary><code>GET</code> <code><b>/api/cursos</b></code></summary>
+
+##### Respostas
+
+> | Código de status HTTP | Tipo                       | Resposta  |
+> | :-------------------- | :------------------------- | :-------- |
+> | `200`                 | `application/json`         | `Curso[]` |
+
+##### Exemplo cURL
+
+> ```javascript
+>  curl http://localhost:5000/api/cursos
+> ```
+
+##### Schemas
+
+<details>
+<summary><code>Curso</code></summary>
+<br>
+
+> | Campo           | Tipo     | Exemplo                 |
+> | :-------------- | :------- | :---------------------- |
+> | `nome_exibicao` | `string` | `"Engenharia Elétrica"` |
+> | `nome_url`      | `string` | `"engenharia-eletrica"` |
 
 </details>
 
