@@ -1,0 +1,15 @@
+services:
+  ufsm-horarios-api:
+    container_name: ufsm_horarios_api
+    image: ufsm-horarios/api
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    networks:
+      - ufsm-horarios-network
+networks:
+  ufsm-horarios-network:
+    name: ufsm_horarios_network
+    driver: bridge
