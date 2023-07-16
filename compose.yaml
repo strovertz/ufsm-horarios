@@ -9,6 +9,16 @@ services:
       - 5000:5000
     networks:
       - ufsm-horarios-network
+  ufsm-horarios-api-cache:
+    container_name: ufsm_horarios_api_cache
+    image: redis:7.0.12
+    command: redis-server
+    ports:
+      - 6379:6379
+    volumes:
+      - ./.docker/ufsm-horarios-api-cache:/data
+    networks:
+      - ufsm-horarios-network
   prd-page-html:
     container_name: nginx
     image: ufsm-horarios/nginx

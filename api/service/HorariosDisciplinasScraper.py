@@ -2,40 +2,38 @@ from seleniumwire import webdriver
 from seleniumwire.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from pydantic_core import ValidationError
-from typing import Any
 from string import Template
+from datetime import datetime
 from time import sleep
 
 from model.AnoPeriodoAtual import AnoPeriodoAtual
 from model.DisciplinasPorPeriodo import DisciplinasPorPeriodo
 from model.HorariosDisciplina import HorariosDisciplina
+from exception.CampusInvalidoError import CampusInvalidoError
+from exception.CursoInvalidoError import CursoInvalidoError
+from util.Util import Util
 
 import json
 
 
-def load_json(filepath: str) -> Any:
-    with open(file=filepath, mode='r', encoding='UTF-8') as file:
-        return json.load(file)
-
-
 class HorariosDisciplinasScraper:
-    __NOMES_CAMPI_UFSM: dict = load_json('data/nomes-campi-ufsm.json')
+    __NOMES_CAMPI_UFSM: dict = Util.load_json('data/nomes-campi-ufsm.json')
 
-    __NOMES_CURSOS_UFSM: list[str] = load_json('data/nomes-cursos-ufsm.json')
+    __NOMES_CURSOS_UFSM: dict = Util.load_json('data/nomes-cursos-ufsm.json')
 
-    __URL_TEMPLATE: Template = Template('https://www.ufsm.br/cursos/graduacao/$campus/$curso/horarios')
+    __REQUEST_URL_TEMPLATE: Template = Template('https://www.ufsm.br/cursos/graduacao/$campus/$curso/horarios')
 
     __DEFAULT_SLEEP_TIME: int = 2
 
     @staticmethod
     def __compose_request_url(curso: str, campus: str = 'santa-maria') -> str:
         if campus.casefold() not in HorariosDisciplinasScraper.__NOMES_CAMPI_UFSM:
-            raise Exception(f'A UFSM não possui campus em "{campus}"')
+            raise CampusInvalidoError(campus)
 
         if curso.casefold() not in HorariosDisciplinasScraper.__NOMES_CURSOS_UFSM:
-            raise Exception(f'A UFSM não oferta o curso "{campus}" em "{HorariosDisciplinasScraper.__NOMES_CAMPI_UFSM.get(campus)}"')
+            raise CursoInvalidoError(curso, HorariosDisciplinasScraper.__NOMES_CAMPI_UFSM.get(campus))
 
-        return HorariosDisciplinasScraper.__URL_TEMPLATE.substitute(campus=campus, curso=curso)
+        return HorariosDisciplinasScraper.__REQUEST_URL_TEMPLATE.substitute(campus=campus, curso=curso)
 
     @staticmethod
     def __convert_to_object(data: dict) -> AnoPeriodoAtual | DisciplinasPorPeriodo | None:
@@ -52,6 +50,9 @@ class HorariosDisciplinasScraper:
         objects: list[AnoPeriodoAtual | DisciplinasPorPeriodo],
         campus: str
     ) -> list[HorariosDisciplina]:
+        ano = datetime.today().year
+        periodo = Util.get_current_semester()
+
         horarios_disciplinas: list[HorariosDisciplina] = list()
 
         for object in objects:
