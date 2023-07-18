@@ -9,6 +9,7 @@ from time import sleep
 from model.AnoPeriodoAtual import AnoPeriodoAtual
 from model.DisciplinasPorPeriodo import DisciplinasPorPeriodo
 from model.HorariosDisciplina import HorariosDisciplina
+from model.ScrapingParameters import ScrapingParameters
 from exception.CampusInvalidoError import CampusInvalidoError
 from exception.CursoInvalidoError import CursoInvalidoError
 from util.Util import Util
@@ -17,6 +18,16 @@ import json
 
 
 class HorariosDisciplinasScraper:
+    __DIAS_SEMANA: dict = {
+        'domingo': 'Domingo',
+        'segunda-feira': 'Segunda-feira',
+        'terca-feira': 'Terça-feira',
+        'quarta-feira': 'Quarta-feira',
+        'quinta-feira': 'Quinta-feira',
+        'sexta-feira': 'Sexta-feira',
+        'sabado': 'Sábado'
+    }
+
     __NOMES_CAMPI_UFSM: dict = Util.load_json('data/nomes-campi-ufsm.json')
 
     __NOMES_CURSOS_UFSM: dict = Util.load_json('data/nomes-cursos-ufsm.json')
@@ -26,7 +37,7 @@ class HorariosDisciplinasScraper:
     __DEFAULT_SLEEP_TIME: int = 2
 
     @staticmethod
-    def __compose_request_url(curso: str, campus: str = 'santa-maria') -> str:
+    def __compose_request_url(campus: str, curso: str) -> str:
         if campus.casefold() not in HorariosDisciplinasScraper.__NOMES_CAMPI_UFSM:
             raise CampusInvalidoError(campus)
 
@@ -106,13 +117,40 @@ class HorariosDisciplinasScraper:
         return chrome_options
 
     @staticmethod
-    def scrap(curso: str, campus: str = 'santa-maria') -> list[HorariosDisciplina]:
+    def __filter(horarios_disciplinas: list[HorariosDisciplina], scraping_parameters: ScrapingParameters) -> list[HorariosDisciplina]:
+        horarios_disciplinas_filtrados: list[HorariosDisciplina] = list()
+
+        nome_exibicao_campus: str | None = HorariosDisciplinasScraper.__NOMES_CAMPI_UFSM.get(scraping_parameters.campus)
+        nome_exibicao_curso: str | None = HorariosDisciplinasScraper.__NOMES_CURSOS_UFSM.get(scraping_parameters.curso)
+
+        for horarios_disciplina in horarios_disciplinas:
+            if not (nome_exibicao_campus and horarios_disciplina.campus.casefold() == nome_exibicao_campus.casefold()):
+                continue
+
+            if not (nome_exibicao_curso and horarios_disciplina.curso.casefold().find(nome_exibicao_curso.casefold()) >= 0):
+                continue
+
+            if scraping_parameters.dia_semana and horarios_disciplina.dia_semana.casefold() != HorariosDisciplinasScraper.__DIAS_SEMANA.get(scraping_parameters.dia_semana).casefold():
+                continue
+
+            if scraping_parameters.horario_inicio and Util.compare_times(scraping_parameters.horario_inicio, horarios_disciplina.horario_inicio) > 0:
+                continue
+
+            if scraping_parameters.horario_fim and Util.compare_times(scraping_parameters.horario_fim, horarios_disciplina.horario_fim) < 0:
+                continue
+
+            horarios_disciplinas_filtrados.append(horarios_disciplina)
+
+        return horarios_disciplinas_filtrados
+
+    @staticmethod
+    def scrap(scraping_parameters: ScrapingParameters) -> list[HorariosDisciplina]:
         chrome_options: Options = HorariosDisciplinasScraper.__get_chrome_options()
         seleniumwire_options: dict = {'disable_encoding': True}
 
         driver: Chrome = webdriver.Chrome(chrome_options=chrome_options, seleniumwire_options=seleniumwire_options)
 
-        url: str = HorariosDisciplinasScraper.__compose_request_url(curso, campus)
+        url: str = HorariosDisciplinasScraper.__compose_request_url(scraping_parameters.campus, scraping_parameters.curso)
 
         driver.get(url)
 
@@ -131,4 +169,7 @@ class HorariosDisciplinasScraper:
 
         driver.quit()
 
-        return HorariosDisciplinasScraper.__extract_horarios_disciplinas(objects, campus)
+        horarios_disciplinas: list[HorariosDisciplina] = HorariosDisciplinasScraper.__extract_horarios_disciplinas(objects, scraping_parameters.campus)
+        horarios_disciplinas_filtrados: list[HorariosDisciplina] = HorariosDisciplinasScraper.__filter(horarios_disciplinas, scraping_parameters)
+
+        return horarios_disciplinas_filtrados

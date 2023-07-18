@@ -6,17 +6,20 @@ Para subir a API, execute o comando `docker compose up -d` no diretório raíz d
 
 ## Endpoints
 
-#### Obter todos os horários de disciplinas de um curso de um campus da UFSM
+#### Obter horários de disciplinas da UFSM a partir de um filtro de busca
 
 <details>
-<summary><code>GET</code> <code><b>/api/campi/{campus}/cursos/{curso}/horarios</b></code></summary>
+<summary><code>GET</code> <code><b>/api/horarios-disciplinas?campus={campus}&curso={curso}&diaSemana={diaSemana}&horarioInicio={horarioInicio}&horarioFim={horarioFim}</b></code></summary>
 
 ##### Parâmetros
 
-> | Nome     | Tipo     | Obrigatório | Descrição        | Valores permitidos                                                                                      |
-> | :------- | :------- | :---------- | :--------------- | :------------------------------------------------------------------------------------------------------ |
-> | `campus` | `string` | `true`      | O nome do campus | `santa-maria`, `cachoeira-do-sul`, `frederico-westphalen`, `palmeira-das-missoes`                       |
-> | `curso`  | `string` | `true`      | O nome do curso  | Qualquer curso da UFSM (e.g., `ciencia-da-computacao`, `sistemas-de-informacao`, `engenharia-eletrica`) |
+> | Nome            | Tipo     | Obrigatório | Descrição                                      | Valores permitidos                                                                                      |
+> | :-------------- | :------- | :---------- | :--------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
+> | `campus`        | `string` | `true`      | O nome do campus                               | `santa-maria`, `cachoeira-do-sul`, `frederico-westphalen`, `palmeira-das-missoes`                       |
+> | `curso`         | `string` | `true`      | O nome do curso                                | Qualquer curso da UFSM (e.g., `ciencia-da-computacao`, `sistemas-de-informacao`, `engenharia-eletrica`) |
+> | `diaSemana`     | `string` | `false`     | O dia da semana em que a disciplina é ofertada | `domingo`, `segunda-feira`, `terca-feira`, `quarta-feira`, `quinta-feira`, `sexta-feira`, `sabado`      |
+> | `horarioInicio` | `string` | `false`     | O horário em que a disciplina inicia           | Qualquer horário válido no formato `HH:MM`                                                              |
+> | `horarioFim`    | `string` | `false`     | O horário em que a disciplina finaliza         | Qualquer horário válido no formato `HH:MM`                                                              |
 
 ##### Respostas
 
@@ -28,7 +31,7 @@ Para subir a API, execute o comando `docker compose up -d` no diretório raíz d
 ##### Exemplo cURL
 
 > ```javascript
->  curl http://localhost:5000/api/campi/santa-maria/cursos/ciencia-da-computacao/horarios
+>  curl http://localhost:5000/api/horarios-disciplinas?campus=santa-maria&curso=sistemas-de-informacao&diaSemana=quarta-feira&horarioInicio=08:00&horarioFim=14:30
 > ```
 
 #### Schemas
