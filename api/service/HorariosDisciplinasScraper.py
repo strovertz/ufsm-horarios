@@ -34,7 +34,7 @@ class HorariosDisciplinasScraper:
 
     __REQUEST_URL_TEMPLATE: Template = Template('https://www.ufsm.br/cursos/graduacao/$campus/$curso/horarios')
 
-    __DEFAULT_SLEEP_TIME: int = 2
+    __DEFAULT_SLEEP_TIME: int = 10
 
     @staticmethod
     def __compose_request_url(campus: str, curso: str) -> str:
