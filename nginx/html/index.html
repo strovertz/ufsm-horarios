@@ -1,176 +1,84 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="pt">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Horários das Disciplinas</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        .filter-container {
-            margin-bottom: 16px;
-        }
-
-        .filter-label {
-            margin-right: 8px;
-        }
-
-        .filter-container {
-            display: flex;
-            justify-content: space-evenly;
-            width: 100%;
-            height: 150px;
-            align-items: center;
-            align-content: center;
-            border-bottom: 1px solid #00000048;
-            background-color: rgb(10, 137, 146);
-            box-shadow: 4px 4px 45px rgba(0, 0, 0, 0.12);
-        }
-
-        .filter-label {
-            text-transform: uppercase;
-            margin-right: 10px;
-            margin-left: 10px;
-            color: #fff;
-        }
-
-        .input--section input, .input--section select {
-            width: 100px !important;
-            height: 40px;
-            border-radius: 10px;
-            border: none;
-            background-color: rgb(230, 230, 230);
-        }
-
-        .info--section h1 {
-            font-weight: bolder;
-            font-size: 2.5rem;
-            color: #fff;
-        }
-    </style>
-    <script>
-        function filterTable() {
-            var inputDay = document.getElementById('input-day');
-            var inputStartTime = document.getElementById('input-start-time');
-            var inputEndTime = document.getElementById('input-end-time');
-
-            var day = inputDay.value;
-            var startTime = inputStartTime.value;
-            var endTime = inputEndTime.value;
-
-            var table = document.getElementById('table-horarios');
-            var rows = table.getElementsByTagName('tr');
-
-            for (var i = 1; i < rows.length; i++) {
-                var row = rows[i];
-                var cells = row.getElementsByTagName('td');
-                var dia = cells[1].innerText;
-                var horarioInicio = cells[2].innerText;
-                var horarioFim = cells[3].innerText;
-
-                var matchDay = day === 'Todos' || dia === day;
-                var matchTime = startTime === '' && endTime === '' || horarioInicio >= startTime && horarioFim <= endTime;
-
-                if (matchDay && matchTime) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-        }
-
-        // Função para fazer a requisição GET
-        function getHorarios() {
-            var url = 'http://52.202.32.31:5000/api/campi/santa-maria/cursos/ciencia-da-computacao/horarios';
-
-            // Fazer a requisição GET usando o objeto XMLHttpRequest
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', url, true);
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    // Sucesso na requisição, manipular a resposta
-                    var horarios = JSON.parse(xhr.responseText);
-                    // Gerar as linhas da tabela com base nos dados retornados
-                    var tableRows = '';
-                    for (var i = 0; i < horarios.length; i++) {
-                        var horario = horarios[i];
-                        // Adicionar os dados na tabela
-                        tableRows += '<tr>';
-                        tableRows += '<td>' + horario.disciplina + '</td>';
-                        tableRows += '<td>' + horario.dia_semana + '</td>';
-                        tableRows += '<td>' + horario.horario_inicio + '</td>';
-                        tableRows += '<td>' + horario.horario_fim + '</td>';
-                        tableRows += '</tr>';
-                    }
-                    // Atualizar o conteúdo da tabela
-                    var table = document.getElementById('table-horarios');
-                    table.innerHTML = tableRows;
-                } else {
-                    // Tratar erros na requisição
-                    console.error('Erro na requisição: ' + xhr.status);
-                }
-            };
-            xhr.onerror = function () {
-                // Tratar erros de conexão
-                console.error('Erro de conexão.');
-            };
-            xhr.send();
-        }
-    </script>
+    <meta charset="utf-8">
+    <title>Horários de disciplinas da UFSM</title>
+    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter">
+    <link rel="stylesheet" href="./styles/index.css">
 </head>
-<body onload="getHorarios()">
-    <div class="filter-container">
-        <div class="info--section">
-            <h1>Horários das Disciplinas</h1>
+
+<body>
+    <div id="main">
+        <div id="header">
+            <div id="header-title"></div>
+            <div id="header-filters-spacer"></div>
         </div>
-        <div class="input--section">
-            <label class="filter-label">Dia:</label>
-            <select id="input-day" onchange="filterTable()">
-                <option value="Todos">Todos</option>
-                <option value="Segunda-feira">Segunda-feira</option>
-                <option value="Terça-feira">Terça-feira</option>
-                <option value="Quarta-feira">Quarta-feira</option>
-                <option value="Quinta-feira">Quinta-feira</option>
-                <option value="Sexta-feira">Sexta-feira</option>
-                <option value="Sábado">Sábado</option>
-            </select>
-
-            <label class="filter-label">Horário Início:</label>
-            <input id="input-start-time" type="time" onchange="filterTable()">
-
-            <label class="filter-label">Horário Fim:</label>
-            <input id="input-end-time" type="time" onchange="filterTable()">
+        <div id="filters">
+            <div id="filters-top-side">
+                <div class="filter" id="campi-filter">
+                    <label for="campi-select">Campus:</label>
+                    <select name="campi" id="campi-select" onchange="selectCampus(this.value);">
+                        <option value="">Selecione um campus</option>
+                    </select>
+                </div>
+                <div class="filter" id="cursos-filter">
+                    <label for="cursos-select">Curso:</label>
+                    <select name="curso" id="cursos-select" onchange="selectCurso(this.value);" disabled>
+                        <option value="">Selecione um curso</option>
+                    </select>
+                </div>
+            </div>
+            <div id="filters-bottom-side">
+                <div class="filter" id="dias-semana-filter">
+                    <label for="dias-semana-select">Dia da semana:</label>
+                    <select name="dia-semana" id="dias-semana-select" onchange="selectDiaSemana(this.value);" disabled>
+                        <option value="">Selecione um dia da semana</option>
+                        <option value="domingo">Domingo</option>
+                        <option value="segunda-feira">Segunda-feira</option>
+                        <option value="terca-feira">Terça-feira</option>
+                        <option value="quarta-feira">Quarta-feira</option>
+                        <option value="quinta-feira">Quinta-feira</option>
+                        <option value="sexta-feira">Sexta-feira</option>
+                        <option value="sabado">Sábado</option>
+                    </select>
+                </div>
+                <div class="filter" id="horario-inicio-filter">
+                    <label for="horario-inicio-input">Horário de início:</label>
+                    <input type="time" id="horario-inicio-input" name="horario-inicio" oninput="selectHorarioInicio(this.value);" min="00:00" max="23:59" value="07:30" disabled>
+                </div>
+                <div class="filter" id="horario-fim-filter">
+                    <label for="horario-fim-input">Horário de término:</label>
+                    <input type="time" id="horario-fim-input" name="horario-fim" oninput="selectHorarioFim(this.value);" min="00:00" max="23:59" value="20:30" disabled>
+                </div>
+            </div>
+        </div>
+        <div id="horarios-disciplinas-spinner-container" hidden>
+            <div id="horarios-disciplinas-spinner">
+            </div>
+        </div>
+        <div id="horarios-disciplinas-not-found" hidden>
+            Nenhum horário de disciplina foi encontrado para o(s) filtro(s) selecionado(s) acima 😢
+        </div>
+        <div id="horarios-disciplinas" hidden>
+            <table id="horarios-disciplinas-table">
+                <thead id="horarios-disciplinas-table-header">
+                    <tr id="horarios-disciplinas-table-header-row">
+                        <th class="horarios-disciplinas-table-header-row-header" id="horarios-disciplinas-table-header-row-disciplina-header" scope="col">Disciplina</th>
+                        <th class="horarios-disciplinas-table-header-row-header" id="horarios-disciplinas-table-header-row-docentes-header" scope="col">Docente(s)</th>
+                        <th class="horarios-disciplinas-table-header-row-header" id="horarios-disciplinas-table-header-row-dia-semana-header" scope="col">Dia da semana</th>
+                        <th class="horarios-disciplinas-table-header-row-header" id="horarios-disciplinas-table-header-row-horario-inicio-header" scope="col">Horario de início</th>
+                        <th class="horarios-disciplinas-table-header-row-header" id="horarios-disciplinas-table-header-row-horario-fim-header" scope="col">Horario de término</th>
+                    </tr>
+                </thead>
+            </table>
         </div>
     </div>
 
-    <table id="table-horarios">
-        <tr>
-            <th>Matéria</th>
-            <th>Dia</th>
-            <th>Horário Início</th>
-            <th>Horário Fim</th>
-        </tr>
-    </table>
+    <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+    <script src="./scripts/index.js"></script>
 </body>
+
 </html>

@@ -12,10 +12,10 @@ class HorariosDisciplina(BaseModel):
     periodo_disciplina: int
     tipo_disciplina: str
     carga_horaria_disciplina: int
-    creditos_disciplina: int
-    vagas_oferecidas: int
-    vagas_ocupadas: int
-    vagas_aumentadas: int
+    creditos_disciplina: int | None
+    vagas_oferecidas: int | None
+    vagas_ocupadas: int | None
+    vagas_aumentadas: int | None
     docentes: list[str]
     dia_semana: str
     horario_inicio: str
