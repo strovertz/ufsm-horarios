@@ -1,0 +1,141 @@
+body {
+    font-size: 16px;
+    margin: 0 auto;
+    max-width: 1080px;
+}
+
+body, select, input {
+    font-family: Inter, Arial, Helvetica, sans-serif;
+}
+
+#main {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    padding-bottom: 50px;
+    padding-top: 25px;
+}
+
+#header {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+#header-title {
+    font-size: 25px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#header-filters-spacer {
+    background-color: black;
+    color: transparent;
+    height: 1px;
+    opacity: 50%;
+    width: 100%;
+}
+
+#horarios-disciplinas {
+    width: 100%;
+}
+
+#horarios-disciplinas-table {
+    border-collapse: collapse;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    width: 100%;
+}
+
+#horarios-disciplinas-table-header-row-disciplina-header {
+    width: 25%;
+}
+
+#horarios-disciplinas-table-header-row-docentes-header {
+    width: 25%;
+}
+
+#horarios-disciplinas-table-header-row-dia-semana-header {
+    width: 10%;
+}
+
+#horarios-disciplinas-table-header-row-horario-inicio-header,
+#horarios-disciplinas-table-header-row-horario-fim-header {
+    width: 7%;
+}
+
+#horarios-disciplinas-table-header-row-disciplina-header, #horarios-disciplinas-table-header-row-docentes-header {
+    text-align: left;
+}
+
+.horarios-disciplinas-table-body-dia-semana-cell,
+.horarios-disciplinas-table-body-horario-inicio-cell,
+.horarios-disciplinas-table-body-horario-fim-cell {
+    text-align: center;
+}
+
+#horarios-disciplinas-table-header-row {
+    background-color: black;
+    color: #ffffff;
+}
+
+#filters {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.filter {
+    align-items: center;
+    display: flex;
+    gap: 5px;
+}
+
+#filters-top-side, #filters-bottom-side {
+    display: flex;
+    gap: 50px;
+}
+
+#horarios-disciplinas-table td, th {
+    border-color: #666666;
+    border-style: solid;
+    border-width: 1px;
+    padding: 8px;
+}
+
+#horarios-disciplinas-not-found {
+    background-color: rgba(239, 239, 239, 0.3);
+    border-color: rgba(0, 0, 0, 0.25);
+    border-radius: 7px;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: rgba(149, 157, 165, 0.125) 0px 8px 24px;
+    color: black;
+    margin: 0 auto;
+    max-width: 400px;
+    padding: 15px;
+}
+
+#horarios-disciplinas-spinner-container {
+    text-align: center;
+}
+
+#horarios-disciplinas-spinner {
+    animation: rotation 1s linear infinite;
+    border-radius: 50%;
+    border-right: 3px solid transparent;
+    border-top: 3px solid #666666;
+    box-sizing: border-box;
+    display: inline-block;
+    height: 32px;
+    width: 32px;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+} 
